@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "jurisdiction": "Quezon City, Metro Manila, Philippines",
+  "version": "1.1.0",
+  "last_verified_date": "2026-10-13",
+  "verification_note": "Numbers and descriptions were cross-checked against the linked public sources on the date above. Confirm availability and call-routing with the relevant agency before operational deployment. The toll_free property is null where the source did not establish toll-free status.",
+  "hotlines": [
+    {
+      "id": "qc_eoc_122",
+      "label": "Quezon City Helpline 122",
+      "number": "122",
+      "dial_string": "122",
+      "extension": null,
+      "toll_free": null,
+      "priority": true,
+      "service_type": "Quezon City emergency assistance and dispatch",
+      "description": "Quezon City Government lists 122 as the QC Helpline for emergencies.",
+      "jurisdiction": "Quezon City",
+      "source_url": "https://quezoncity.gov.ph/contact-us/",
+      "verification_status": "verified_number; confirm hours and service details before release"
+    },
+    {
+      "id": "qcdrrmo_landline_1",
+      "label": "QCDRRMO Operations Center (Primary)",
+      "number": "(02) 8927-5914",
+      "dial_string": "+63289275914",
+      "extension": null,
+      "toll_free": false,
+      "priority": true,
+      "service_type": "Quezon City disaster risk reduction and response",
+      "description": "Direct line listed by the Quezon City Government for QCDRRMO.",
+      "jurisdiction": "Quezon City",
+      "source_url": "https://quezoncity.gov.ph/contact-us/",
+      "verification_status": "verified_number"
+    },
+    {
+      "id": "qcdrrmo_landline_2",
+      "label": "QCDRRMO Operations Center (Secondary)",
+      "number": "(02) 8928-4396",
+      "dial_string": "+63289284396",
+      "extension": null,
+      "toll_free": false,
+      "priority": false,
+      "service_type": "Quezon City disaster risk reduction and response",
+      "description": "Secondary direct line listed by the Quezon City Government for QCDRRMO.",
+      "jurisdiction": "Quezon City",
+      "source_url": "https://quezoncity.gov.ph/contact-us/",
+      "verification_status": "verified_number"
+    },
+    {
+      "id": "national_911",
+      "label": "Unified National Emergency Hotline 911",
+      "number": "911",
+      "dial_string": "911",
+      "extension": null,
+      "toll_free": true,
+      "priority": true,
+      "service_type": "National emergency answering and dispatch",
+      "description": "Nationwide emergency hotline for coordinating police, fire, medical, rescue, and other emergency response.",
+      "jurisdiction": "Philippines",
+      "source_url": "https://pia.gov.ph/press-release/dilg-unified-911-hits-96-15-efficiency-handles-12-7-million-calls/",
+      "verification_status": "verified_national_hotline; confirm local routing during operational testing",
+      "source_urls": [
+        "https://pia.gov.ph/press-release/dilg-unified-911-hits-96-15-efficiency-handles-12-7-million-calls/",
+        "https://pia.gov.ph/news/one-number-for-all-emergencies-unified-911-to-launch-nationwide/"
+      ]
+    },
+    {
+      "id": "philippine_red_cross_143",
+      "label": "Philippine Red Cross Emergency Hotline",
+      "number": "143",
+      "dial_string": "143",
+      "extension": null,
+      "toll_free": null,
+      "priority": false,
+      "service_type": "Philippine Red Cross emergency assistance",
+      "description": "Philippine Red Cross national emergency hotline; do not label it as a Quezon City-only chapter number.",
+      "jurisdiction": "Philippines",
+      "source_url": "https://redcross.org.ph/contact-us/",
+      "verification_status": "verified_number; toll-free status not asserted here"
+    },
+    {
+      "id": "qc_city_hall_trunkline",
+      "label": "Quezon City Hall Trunkline",
+      "number": "(02) 8988-4242",
+      "dial_string": "+63289884242",
+      "extension": "8416",
+      "alternate_extensions": [
+        "8407"
+      ],
+      "toll_free": false,
+      "priority": false,
+      "service_type": "City government information and assistance",
+      "description": "Quezon City Government trunkline. Use the listed extension for the relevant office and confirm extensions remain current.",
+      "jurisdiction": "Quezon City",
+      "source_url": "https://quezoncity.gov.ph/contact-us/",
+      "verification_status": "verified_trunkline; verify extension before release"
+    }
+  ]
+}

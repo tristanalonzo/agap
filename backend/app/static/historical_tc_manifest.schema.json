@@ -1,0 +1,369 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:project-agap:schema:historical_tc_manifest:1.0.0",
+  "title": "Project AGAP Historical Tropical Cyclone Replay Manifest",
+  "type": "object",
+  "required": [
+    "manifest_version",
+    "updated_at",
+    "time_standard",
+    "target_storm_count",
+    "selection_policy",
+    "reference_resources",
+    "storms"
+  ],
+  "properties": {
+    "manifest_version": {
+      "type": "string"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date"
+    },
+    "time_standard": {
+      "const": "UTC; ISO 8601 timestamps ending in Z"
+    },
+    "purpose": {
+      "type": "string"
+    },
+    "target_storm_count": {
+      "type": "object",
+      "required": [
+        "minimum",
+        "maximum"
+      ],
+      "properties": {
+        "minimum": {
+          "const": 3
+        },
+        "maximum": {
+          "const": 4
+        }
+      },
+      "additionalProperties": false
+    },
+    "selection_policy": {
+      "type": "object",
+      "required": [
+        "evaluation_split_unit",
+        "do_not_split_frames_from_one_storm_across_train_validation_test",
+        "require_training_overlap_review",
+        "do_not_invent_missing_observations_or_reference_labels",
+        "reference_labels_used_only_after_inference"
+      ],
+      "properties": {
+        "evaluation_split_unit": {
+          "const": "whole_storm"
+        },
+        "do_not_split_frames_from_one_storm_across_train_validation_test": {
+          "type": "boolean"
+        },
+        "require_training_overlap_review": {
+          "type": "boolean"
+        },
+        "do_not_invent_missing_observations_or_reference_labels": {
+          "type": "boolean"
+        },
+        "reference_labels_used_only_after_inference": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "reference_resources": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "format": "uri"
+      }
+    },
+    "storms": {
+      "type": "array",
+      "maxItems": 4,
+      "items": {
+        "$ref": "#/$defs/storm"
+      }
+    }
+  },
+  "$defs": {
+    "referenceSource": {
+      "type": "object",
+      "required": [
+        "source_type",
+        "url",
+        "accessed_at"
+      ],
+      "properties": {
+        "source_type": {
+          "enum": [
+            "pagasa_annual_report",
+            "pagasa_preliminary_report",
+            "ibtracs",
+            "satellite_archive",
+            "other"
+          ]
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "accessed_at": {
+          "type": "string",
+          "format": "date"
+        },
+        "dataset_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "observation": {
+      "type": "object",
+      "required": [
+        "observation_id",
+        "observed_at",
+        "satellite_provider",
+        "product",
+        "band",
+        "source_object_uri",
+        "asset_status"
+      ],
+      "properties": {
+        "observation_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "observed_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "Z$"
+        },
+        "satellite_provider": {
+          "type": "string",
+          "minLength": 1
+        },
+        "satellite": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "product": {
+          "type": "string",
+          "minLength": 1
+        },
+        "band": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_object_uri": {
+          "type": "string",
+          "minLength": 1
+        },
+        "local_asset_path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sha256": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[A-Fa-f0-9]{64}$"
+        },
+        "frame_type": {
+          "enum": [
+            "full_disk",
+            "storm_crop",
+            "other"
+          ]
+        },
+        "asset_status": {
+          "enum": [
+            "unverified",
+            "available",
+            "unavailable",
+            "invalid"
+          ]
+        },
+        "reference_intensity": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "required": [
+            "category_code",
+            "sustained_wind_kph",
+            "wind_averaging_period_minutes",
+            "source_type",
+            "source_url"
+          ],
+          "properties": {
+            "category_code": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "enum": [
+                "TD",
+                "TS",
+                "STS",
+                "TY",
+                "STY",
+                null
+              ]
+            },
+            "sustained_wind_kph": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "wind_averaging_period_minutes": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "exclusiveMinimum": 0
+            },
+            "source_type": {
+              "enum": [
+                "pagasa_annual_report",
+                "pagasa_preliminary_report",
+                "ibtracs",
+                "other"
+              ]
+            },
+            "source_url": {
+              "type": "string",
+              "format": "uri"
+            },
+            "source_agency": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "original_wind_value": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "original_wind_unit": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "notes": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "quality_notes": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "storm": {
+      "type": "object",
+      "required": [
+        "storm_id",
+        "name",
+        "season_year",
+        "selection_status",
+        "dataset_role",
+        "training_overlap_status",
+        "reference_sources",
+        "observations"
+      ],
+      "properties": {
+        "storm_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_-]*$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "international_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "season_year": {
+          "type": "integer",
+          "minimum": 1900,
+          "maximum": 2100
+        },
+        "selection_status": {
+          "enum": [
+            "candidate",
+            "selected",
+            "excluded"
+          ]
+        },
+        "dataset_role": {
+          "enum": [
+            "not_assigned",
+            "train",
+            "validation",
+            "test",
+            "demo_only"
+          ]
+        },
+        "training_overlap_status": {
+          "enum": [
+            "unknown",
+            "overlaps_training",
+            "overlaps_model_selection",
+            "no_known_overlap",
+            "not_checked"
+          ]
+        },
+        "reference_sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/referenceSource"
+          }
+        },
+        "observations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/observation"
+          }
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

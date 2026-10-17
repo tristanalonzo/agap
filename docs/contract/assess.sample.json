@@ -1,0 +1,59 @@
+{
+  "assessment_id": "3f2b8c1e-0000-4000-8000-000000000001",
+  "generated_at": "2026-10-17T10:00:00+08:00",
+  "run_context": {
+    "mode": "demo",
+    "storm_id": null,
+    "observation_id": null
+  },
+  "location": {
+    "latitude": 14.65,
+    "longitude": 121.05,
+    "jurisdiction": "Quezon City",
+    "in_bounds": true
+  },
+  "cyclone_assessment": {
+    "status": "demo",
+    "is_demo": true,
+    "category_code": "TY",
+    "category_name": "Typhoon",
+    "sustained_wind_kph": 140.0,
+    "confidence": null,
+    "confidence_is_calibrated": false,
+    "model_version": null,
+    "observed_at": null,
+    "inferred_at": "2026-10-17T10:00:00+08:00",
+    "warnings": ["Mock result for development. Not a real prediction."]
+  },
+  "rainfall_warning": {
+    "status": "unavailable",
+    "alert_level": "unknown",
+    "affected_area": null,
+    "issued_at": null,
+    "valid_until": null,
+    "source_url": "https://bagong.pagasa.dost.gov.ph/weather/rainfall-warning",
+    "retrieved_at": null,
+    "raw_text": null
+  },
+  "flood_scenario": {
+    "source": "Project NOAH hazard maps (BetterGovPH dataset)",
+    "selected_return_period_years": 25,
+    "hazard_level": null,
+    "is_live_forecast": false,
+    "lookup_status": "not_implemented"
+  },
+  "nearest_shelter": {
+    "status": "available",
+    "facility_id": "osm-node-0000000000",
+    "name": "Example Covered Court",
+    "latitude": 14.6512,
+    "longitude": 121.0493,
+    "distance_m": 150,
+    "is_verified": false
+  },
+  "data_status": {
+    "overall": "partial",
+    "stale_components": [],
+    "unavailable_components": ["rainfall_warning"]
+  }
+}

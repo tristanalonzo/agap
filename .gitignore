@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+
+# Secrets / local settings
+.env
+CLAUDE.local.md
+
+# Node
+node_modules/
+dist/
+
+# Big files (keep in Drive, not GitHub)
+*.h5
+*.zip
+backend/app/data/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

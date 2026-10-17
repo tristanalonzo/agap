@@ -1,0 +1,24 @@
+{
+  "manifest_version": "1.0.0",
+  "updated_at": "2026-10-13",
+  "time_standard": "UTC; ISO 8601 timestamps ending in Z",
+  "purpose": "Catalog verified historical tropical cyclone cases and observations for Project AGAP replay. This file intentionally starts empty; populate it only with source-verified records.",
+  "target_storm_count": {
+    "minimum": 3,
+    "maximum": 4
+  },
+  "selection_policy": {
+    "evaluation_split_unit": "whole_storm",
+    "do_not_split_frames_from_one_storm_across_train_validation_test": true,
+    "require_training_overlap_review": true,
+    "do_not_invent_missing_observations_or_reference_labels": true,
+    "reference_labels_used_only_after_inference": true
+  },
+  "reference_resources": {
+    "himawari_open_data_registry": "https://registry.opendata.aws/noaa-himawari/",
+    "pagasa_preliminary_reports": "https://www.pagasa.dost.gov.ph/tropical-cyclone/publications/preliminary-report",
+    "pagasa_annual_reports": "https://www.pagasa.dost.gov.ph/tropical-cyclone/publications/annual-report",
+    "ibtracs": "https://www.ncei.noaa.gov/products/international-best-track-archive"
+  },
+  "storms": []
+}

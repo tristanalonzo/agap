@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Project AGAP Wind Hazard Reference Matrix",
+  "version": "1.1.0",
+  "data_status": "decision_support_reference",
+  "classification_source": "DOST-PAGASA Tropical Cyclone Wind Signal guidance and tropical cyclone classification references",
+  "classification_source_url": "https://pagasa.dost.gov.ph/learning-tools/tropical-cyclone-wind-signal",
+  "notes": [
+    "This matrix is a general preparedness reference, not an engineering damage model, official warning, or evacuation order.",
+    "The sustained_wind_kph_range is [minimum, maximum]. A null maximum means the category has no upper bound in this data contract.",
+    "Do not convert a cyclone category directly into an official Tropical Cyclone Wind Signal (TCWS). PAGASA issues TCWS by affected land area, expected wind threat, and warning lead time.",
+    "Use current PAGASA, Quezon City, and other relevant authorities' advisories for time-sensitive protective actions. Review all wording with local disaster-management personnel before public deployment."
+  ],
+  "wind_hazard_matrix": [
+    {
+      "code": "TD",
+      "category": "Tropical Depression",
+      "sustained_wind_kph_range": [0, 61],
+      "relative_threat_level": "Lower relative wind-hazard band; conditions remain location-dependent",
+      "structural_vulnerabilities": [
+        {
+          "element": "Makeshift and temporary shelters",
+          "risk": "Loose tarpaulins, canopies, or light outdoor fixtures may be displaced",
+          "action": "Secure loose outdoor items before conditions worsen, but only while it is safe to do so."
+        },
+        {
+          "element": "Trees and vegetation",
+          "risk": "Weak branches may break, especially where trees are damaged or soil is saturated",
+          "action": "Keep clear of damaged trees and branches; report dangerous conditions to local authorities."
+        }
+      ]
+    },
+    {
+      "code": "TS",
+      "category": "Tropical Storm",
+      "sustained_wind_kph_range": [62, 88],
+      "relative_threat_level": "Elevated wind hazard; local impacts vary",
+      "structural_vulnerabilities": [
+        {
+          "element": "Light roofing and exterior fixtures",
+          "risk": "Poorly secured or deteriorated materials may loosen",
+          "action": "Secure or bring in loose outdoor items before strong winds arrive. Do not climb onto roofs during hazardous weather."
+        },
+        {
+          "element": "Airborne objects",
+          "risk": "Lightweight yard items and unsecured debris may be blown around",
+          "action": "Move outdoor furniture and loose materials indoors before conditions become dangerous."
+        },
+        {
+          "element": "Power and telecommunications lines",
+          "risk": "Falling branches or damaged structures may affect utility lines",
+          "action": "Stay well clear of fallen or sagging wires and report them to the appropriate utility or emergency authority."
+        }
+      ]
+    },
+    {
+      "code": "STS",
+      "category": "Severe Tropical Storm",
+      "sustained_wind_kph_range": [89, 117],
+      "relative_threat_level": "High wind hazard; significant local damage is possible",
+      "structural_vulnerabilities": [
+        {
+          "element": "Residential roofing and lightweight structures",
+          "risk": "Deteriorated roofs and poorly connected components may fail",
+          "action": "Follow official preparedness and evacuation instructions. Do not attempt roof repairs while winds or rain are hazardous."
+        },
+        {
+          "element": "Windows and exterior openings",
+          "risk": "Flying debris and wind pressure can damage glazing and openings",
+          "action": "Close shutters if fitted before hazardous conditions arrive and keep away from windows during strong winds."
+        },
+        {
+          "element": "Electrical infrastructure",
+          "risk": "Fallen branches and damaged equipment may cause outages or exposed electrical hazards",
+          "action": "Prepare for possible power interruptions. Never touch downed lines or damaged electrical equipment."
+        }
+      ]
+    },
+    {
+      "code": "TY",
+      "category": "Typhoon",
+      "sustained_wind_kph_range": [118, 184],
+      "relative_threat_level": "Very high wind hazard; severe local impacts are possible",
+      "structural_vulnerabilities": [
+        {
+          "element": "Building envelopes and roofs",
+          "risk": "Light-material structures and poorly secured components may suffer serious damage",
+          "action": "Follow official guidance on sheltering or evacuation and move to an approved shelter before travel becomes unsafe."
+        },
+        {
+          "element": "Airborne debris",
+          "risk": "Roofing sheets, branches, and unsecured materials may become dangerous projectiles",
+          "action": "Remain indoors in a suitable sheltered location during dangerous winds and stay away from windows."
+        },
+        {
+          "element": "Trees, utility poles, and overhead lines",
+          "risk": "Trees or infrastructure may fall and block roads or expose electrical hazards",
+          "action": "Avoid blocked roads and damaged infrastructure. Report hazards; do not approach or move fallen wires."
+        }
+      ]
+    },
+    {
+      "code": "STY",
+      "category": "Super Typhoon",
+      "sustained_wind_kph_range": [185, null],
+      "relative_threat_level": "Extreme wind hazard; catastrophic impacts may occur in exposed or vulnerable locations",
+      "structural_vulnerabilities": [
+        {
+          "element": "Buildings and other built infrastructure",
+          "risk": "Severe structural damage or failure is possible, especially in vulnerable structures",
+          "action": "Follow official evacuation or shelter instructions promptly. Use only designated shelters and routes identified as safe by authorities."
+        },
+        {
+          "element": "Power, communications, and other critical utilities",
+          "risk": "Widespread service disruption and hazardous damaged infrastructure may occur",
+          "action": "Prepare for communications and power interruptions. Use verified emergency contacts and avoid damaged utility infrastructure."
+        }
+      ]
+    }
+  ]
+}
