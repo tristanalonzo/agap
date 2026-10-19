@@ -38,3 +38,4 @@ Keep this file short and current. AI tools read it at the start of every session
 
 - 2026-10-17 — Tristan — Starter kit pushed (AGENTS.md, contract, reference docs).
 - 2026-10-19 — Tristan (Claude Code) — Backend skeleton on `feat/backend-skeleton`: config, CORS, `/health/live` + test, pinned requirements, empty placeholders for Marcus.
+- 2026-10-20 — Tristan (Claude Code) — Covered F1 on `feat/frontend-base` (from Kurt's branch): proxy, `client.js` + contract mock, cards read the contract, StatusBadge, scenario chips labelled DEMO.
