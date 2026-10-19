@@ -37,3 +37,4 @@ Keep this file short and current. AI tools read it at the start of every session
 ## Log (newest at the bottom, one line each: date — who — what)
 
 - 2026-10-17 — Tristan — Starter kit pushed (AGENTS.md, contract, reference docs).
+- 2026-10-19 — Tristan (Claude Code) — L2 flood map on `feat/flood-map` (from Kurt's branch): `FloodMap.jsx` with MapLibre + NOAH PMTiles (layers flood_5yr/25yr/100yr, `Var` 1–3), 5/25/100 toggle default 25.

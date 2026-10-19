@@ -1,0 +1,22 @@
+.flood-map-holder {
+  height: 360px;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 12px 0 8px;
+}
+
+.flood-map-legend {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 6px;
+}
+
+.flood-map-error {
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-top: 10px;
+  font-size: 12px;
+}

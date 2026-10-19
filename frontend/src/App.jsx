@@ -4,6 +4,7 @@ import LocationCard from "./components/LocationCard";
 import SatelliteCard from "./components/SatelliteCard";
 import HrwsCard from "./components/HrwsCard";
 import HazardMapTab from "./components/HazardMapTab";
+import FloodMap from "./components/FloodMap";
 import DebrisTab from "./components/DebrisTab";
 import ActionTab from "./components/ActionTab";
 
@@ -49,7 +50,7 @@ export default function App() {
             <HrwsCard scenario={scenario} />
           </>
         )}
-        {tab === "Hazard Map" && <HazardMapTab />}
+        {tab === "Hazard Map" && (<><HazardMapTab /><FloodMap /></>)}
         {tab === "Debris" && <DebrisTab scenario={scenario} />}
         {tab === "Action / SOS" && <ActionTab scenario={scenario} />}
       </main>
