@@ -1,21 +1,11 @@
 export const scenarios = [
+  // This chip shows the mock API response (docs/contract/assess.sample.json), not live data.
   {
     id: "live",
-    chip: "Live Ingestion",
-    mode: "Live Monitoring (Himawari-9 B13 ingested • Prototype ResNet-18)",
-    alert: { level: "red", label: "RED ALERT (TORRENTIAL)" },
-    obs: "OBS: LATEST USABLE (2026-10-13 02:00 PST)",
-    badge: "LIVE OBSERVATION (AHI L1b)",
-    unevenScore: 0.79,
-    coreTemp: "-84.6°C (Extreme Core)",
-    classification: "Super Typhoon",
-    windKmh: 220,
-    reference: { label: "Reference: Pending", note: "Real-time source stream" },
-    hrws: {
-      rainfall: "> 30 mm/h",
-      text: "Severe, widespread inundation anticipated across Metro Manila. Follow QCDRRMO directives.",
-    },
+    chip: "Mock API",
+    mode: "Mock API response (contract sample)",
   },
+  // The replay chips below are example values from the design mockup.
   {
     id: "ts",
     chip: "Replay: TS",

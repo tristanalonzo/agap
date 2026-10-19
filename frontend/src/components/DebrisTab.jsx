@@ -1,7 +1,7 @@
 import { debrisHazards } from "../data/safety";
 
-export default function DebrisTab({ scenario }) {
-  const tier = scenario.classification.toUpperCase();
+export default function DebrisTab({ cyclone }) {
+  const tier = (cyclone.category_name ?? "Unknown").toUpperCase();
 
   return (
     <>
@@ -11,7 +11,7 @@ export default function DebrisTab({ scenario }) {
             <h3>Debris &amp; Wind Hazards</h3>
             <p className="muted small">Material vulnerabilities calibrated to wind speeds</p>
           </div>
-          <span className="static-tag">{tier} TIER</span>
+          <span className="static-tag">{tier} TIER{cyclone.is_demo && " · DEMO"}</span>
         </div>
 
         {debrisHazards.map((h) => (

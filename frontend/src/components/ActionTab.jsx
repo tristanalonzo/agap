@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { civilDefense, checklistItems, hotlines } from "../data/safety";
+import StatusBadge from "./StatusBadge";
 
-export default function ActionTab({ scenario }) {
-  const status = civilDefense[scenario.alert.level];
+export default function ActionTab({ rainfall }) {
+  // No known alert level (for example PAGASA could not be loaded) = no order shown.
+  const status = civilDefense[rainfall.alert_level] ?? civilDefense.unknown;
   const [done, setDone] = useState(checklistItems.map(() => false));
   const doneCount = done.filter(Boolean).length;
 
@@ -12,10 +14,11 @@ export default function ActionTab({ scenario }) {
 
   return (
     <>
-      <section className={`civil-card ${scenario.alert.level}`}>
+      <section className={`civil-card ${rainfall.alert_level}`}>
         <div className="card-head">
           <span className="mono tiny muted">CIVIL DEFENSE STATUS</span>
           <span className="order-tag">{status.badge}</span>
+          <StatusBadge status={rainfall.status} time={rainfall.retrieved_at} />
         </div>
         <h3>{status.title}</h3>
         <p className="mono tiny timeline">{status.timeline}</p>

@@ -1,6 +1,6 @@
-export default function SatelliteCard({ scenario }) {
-  const { obs, badge, unevenScore, coreTemp, classification, windKmh, reference } = scenario;
+import StatusBadge from "./StatusBadge";
 
+export default function SatelliteCard({ cyclone, visual }) {
   return (
     <section className="card">
       <div className="card-head">
@@ -8,17 +8,14 @@ export default function SatelliteCard({ scenario }) {
           <h3>Himawari-9 Clean IR (Band 13)</h3>
           <p className="muted small">Experimental ResNet-18 Classifier (Model estimate)</p>
         </div>
-        <span className="tag-blue">{badge}</span>
+        <StatusBadge status={cyclone.status} time={cyclone.inferred_at} />
       </div>
 
-      <div className={`sat-view ${scenario.id}`}>
-        <span className="sat-label top-left">{obs}</span>
-        <span className="sat-label top-right">UNEVEN SCORE: {unevenScore}</span>
+      {cyclone.is_demo && <p className="demo-banner">DEMO — not a real prediction</p>}
+
+      <div className={`sat-view ${visual}`}>
+        <span className="sat-label top-left">ILLUSTRATION — not a real satellite image</span>
         <div className="eye" />
-        <div className="sat-legend">
-          <span className="red-text">{coreTemp}</span>
-          <span className="blue-text">-30°C Edge</span>
-        </div>
       </div>
 
       <div className="two-col">
@@ -26,15 +23,19 @@ export default function SatelliteCard({ scenario }) {
           <p className="box-label">
             MODEL CLASSIFICATION <span className="unofficial">NON-OFFICIAL</span>
           </p>
-          <p className="class-name">{classification}</p>
-          <p className="small mono">{windKmh} km/h est. sustained</p>
+          <p className="class-name">{cyclone.category_name ?? "Unknown"}</p>
+          <p className="small mono">{cyclone.sustained_wind_kph ?? "?"} km/h est. sustained</p>
         </div>
         <div className="box">
-          <p className="box-label">EVALUATION REFERENCE</p>
-          <p className="ref-name mono">{reference.label}</p>
-          <p className="small mono">{reference.note}</p>
+          <p className="box-label">MODEL VERSION</p>
+          <p className="ref-name mono">{cyclone.model_version ?? "None (mock)"}</p>
+          <p className="small mono">Confidence: {cyclone.confidence ?? "n/a"}</p>
         </div>
       </div>
+
+      {cyclone.warnings.map((warning) => (
+        <p className="warning-text" key={warning}>⚠ {warning}</p>
+      ))}
 
       <p className="notice">
         <strong>Notice:</strong> Model classification estimates meteorological storm
