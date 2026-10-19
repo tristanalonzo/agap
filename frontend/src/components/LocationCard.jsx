@@ -1,16 +1,17 @@
-export default function LocationCard() {
+export default function LocationCard({ location }) {
   return (
     <section className="card location-card">
       <div className="location-info">
-        <h3>
-          Quezon City (Central Sector){" "}
-          <span className="tag-blue">San Juan / Tullahan Basin</span>
-        </h3>
+        <h3>{location.jurisdiction}</h3>
         <p className="muted mono">
-          14.6500°N, 121.0500°E • Pilot Jurisdiction Validated
+          {location.latitude.toFixed(4)}°N, {location.longitude.toFixed(4)}°E
         </p>
       </div>
-      <span className="pill-green">● QC BOUNDS OK</span>
+      {location.in_bounds ? (
+        <span className="pill-green">● QC BOUNDS OK</span>
+      ) : (
+        <span className="status-badge unavailable">OUTSIDE QC</span>
+      )}
     </section>
   );
 }

@@ -37,3 +37,4 @@ Keep this file short and current. AI tools read it at the start of every session
 ## Log (newest at the bottom, one line each: date — who — what)
 
 - 2026-10-17 — Tristan — Starter kit pushed (AGENTS.md, contract, reference docs).
+- 2026-10-20 — Tristan (Claude Code) — Covered F1 on `feat/frontend-base` (from Kurt's branch): proxy, `client.js` + contract mock, cards read the contract, StatusBadge, scenario chips labelled DEMO.

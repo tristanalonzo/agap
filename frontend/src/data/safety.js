@@ -35,10 +35,15 @@ export const civilDefense = {
     title: "Stay Alert and Monitor Updates",
     timeline: "TARGET TIMELINE: NO ORDER YET (TODO: confirm)",
   },
+  unknown: {
+    badge: "NO ORDER LOADED",
+    title: "No official evacuation order loaded",
+    timeline: "FOLLOW QCDRRMO AND BARANGAY ANNOUNCEMENTS",
+  },
 };
 
 export const checklistItems = [
-  "COMPLETE IMMEDIATE EVACUATION to Barangay Evacuation Gymnasium.",
+  "Know where your nearest evacuation center is.",
   "Emergency dispatch may be suspended during peak gusts.",
   "Keep all family members physically together; avoid travel outdoors.",
   "Stay in lowest-level interior corridors away from glass.",

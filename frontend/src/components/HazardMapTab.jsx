@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { noahScenarios, varLevels, facilities } from "../data/hazard";
+import { noahScenarios, varLevels } from "../data/hazard";
 import QcMap from "./QcMap";
+import StatusBadge from "./StatusBadge";
 
-export default function HazardMapTab() {
-  const [periodId, setPeriodId] = useState("5yr");
+export default function HazardMapTab({ shelter, dataStatus, time }) {
+  const [periodId, setPeriodId] = useState("25yr");
   const [recenterKey, setRecenterKey] = useState(0);
   const period = noahScenarios.find((p) => p.id === periodId);
 
@@ -41,17 +42,6 @@ export default function HazardMapTab() {
         <div className="map-box">
           <QcMap color={period.color} recenterKey={recenterKey} />
 
-          <div className="map-callout">
-            <div>
-              <p className="tiny muted mono">STATIC MODEL INTERSECT</p>
-              <p className="bold">
-                <span className="dot" style={{ background: period.color }} />
-                {period.zone} (Var: {period.varLevel}, {period.depth})
-              </p>
-            </div>
-            <span className="static-tag">STATIC NOAH</span>
-          </div>
-
           <div className="map-legend">
             <p className="tiny muted mono">NOAH VAR LEVELS</p>
             {varLevels.map((v) => (
@@ -65,24 +55,25 @@ export default function HazardMapTab() {
       </section>
 
       <div className="section-head">
-        <h3>Nearby Evacuation Facilities</h3>
-        <span className="mono tiny muted">UNVERIFIED</span>
+        <h3>Nearest Evacuation Shelter</h3>
+        <StatusBadge status={dataStatus} time={time} />
       </div>
 
-      {facilities.map((f) => (
-        <section className="card facility" key={f.name}>
+      {shelter.status === "available" ? (
+        <section className="card facility">
           <div>
-            <p className="bold">{f.name}</p>
+            <p className="bold">{shelter.name}</p>
             <p className="muted small mono">
-              District {f.district} • Unverified, confirm with your barangay
+              {shelter.distance_m} m away (straight line) •{" "}
+              {shelter.is_verified ? "Verified" : "Unverified, confirm with your barangay"}
             </p>
           </div>
-          <div className="facility-right">
-            <span className="pill-green">CAPACITY: {f.capacity.toLocaleString()}</span>
-            <a href="#" onClick={(e) => e.preventDefault()}>View Pin</a>
-          </div>
         </section>
-      ))}
+      ) : (
+        <section className="card">
+          <p className="muted small">Shelter data is not available right now.</p>
+        </section>
+      )}
     </>
   );
 }
