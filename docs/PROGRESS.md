@@ -37,3 +37,4 @@ Keep this file short and current. AI tools read it at the start of every session
 ## Log (newest at the bottom, one line each: date — who — what)
 
 - 2026-10-17 — Tristan — Starter kit pushed (AGENTS.md, contract, reference docs).
+- 2026-10-19 — Tristan (Claude Code) — Backend skeleton on `feat/backend-skeleton`: config, CORS, `/health/live` + test, pinned requirements, empty placeholders for Marcus.
