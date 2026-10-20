@@ -34,7 +34,6 @@ export default function App() {
   // "Mock API" chip = the assessment as loaded. Other chips = mockup example values.
   const data = scenario.id === "live" ? assessment : toDemoReplay(assessment, scenario);
   const rainfall = data.rainfall_warning;
-  const isDemo = data.run_context.mode === "demo";
 
   return (
     <div className="app">
@@ -71,11 +70,7 @@ export default function App() {
           </>
         )}
         {tab === "Hazard Map" && (
-          <HazardMapTab
-            shelter={data.nearest_shelter}
-            dataStatus={isDemo ? "demo" : "live"}
-            time={data.generated_at}
-          />
+          <HazardMapTab shelter={data.nearest_shelter} time={data.generated_at} />
         )}
         {tab === "Debris" && <DebrisTab cyclone={data.cyclone_assessment} />}
         {tab === "Action / SOS" && <ActionTab rainfall={rainfall} />}

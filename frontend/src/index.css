@@ -388,6 +388,16 @@ body {
   gap: 6px;
 }
 .facility-right a { font-size: 12px; color: var(--primary); text-decoration: none; }
+.unverified-tag {
+  background: #fef3c7;
+  color: #92400e;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 6px;
+  margin-right: 4px;
+}
 /* ---------- Debris ---------- */
 .hazard-row {
   border: 1px solid var(--border);
