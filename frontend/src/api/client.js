@@ -3,7 +3,7 @@ import mockAssessment from "../mocks/assess.sample.json";
 
 // true = use the sample response from docs/contract (no backend needed).
 // false = call the real FastAPI backend.
-export const USE_MOCK = true;
+export const USE_MOCK = false;
 
 export async function getAssessment(lat, lon, years) {
   if (USE_MOCK) {
