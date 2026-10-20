@@ -1,5 +1,6 @@
 // Shows where a card's data comes from (LIVE / DEMO / STALE / UNAVAILABLE) and when.
-const LABELS = { live: "LIVE", demo: "DEMO", stale: "STALE" };
+// "fresh" is what the PAGASA service calls data it read just now.
+const LABELS = { live: "LIVE", fresh: "LIVE", demo: "DEMO", stale: "STALE" };
 
 function formatTime(isoText) {
   if (!isoText) return "no time";

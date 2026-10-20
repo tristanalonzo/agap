@@ -518,5 +518,10 @@ body {
 .banner.unknown { background: #f3f4f6; }
 .alert-box.unknown,
 .civil-card.unknown { background: #f3f4f6; border-color: #d1d5db; }
+.banner.none { background: #ecfdf5; }
+.alert-box.none { background: #ecfdf5; border-color: #a7f3d0; }
+.civil-card.none { background: #f3f4f6; border-color: #d1d5db; }
+.advisory summary { cursor: pointer; font-weight: 700; margin-top: 8px; }
+.advisory p { margin-top: 6px; white-space: pre-line; }
 .warning-text { font-size: 12px; color: #92400e; margin: 8px 0; }
 .load-error { color: #991b1b; }
