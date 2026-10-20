@@ -3,6 +3,7 @@ import * as maplibregl from "maplibre-gl";
 import { Protocol } from "pmtiles";
 import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?url";
 import "maplibre-gl/dist/maplibre-gl.css";
+import { getShelters } from "../api/client";
 import "./FloodMap.css";
 
 // Tell MapLibre where its background worker file is (Vite can't find it on its own).
@@ -35,6 +36,51 @@ const LEGEND = [
   { label: "Medium", color: "#fb923c" },
   { label: "High", color: "#ef4444" },
 ];
+
+const SHELTER_COLOR = "#2563eb";
+const NEAREST_COLOR = "#16a34a";
+const YOU_COLOR = "#111827";
+
+// Run fn now if the map has finished loading, otherwise right after it does.
+function whenReady(map, fn) {
+  if (map.agapReady) fn();
+  else map.once("load", fn);
+}
+
+// Popup text built with DOM nodes (not HTML strings), because shelter names come from OpenStreetMap.
+function popupFor(title, note) {
+  const box = document.createElement("div");
+  const strong = document.createElement("strong");
+  strong.textContent = title;
+  const small = document.createElement("div");
+  small.textContent = note;
+  box.append(strong, small);
+  return new maplibregl.Popup({ offset: 12 }).setDOMContent(box);
+}
+
+// All shelters from GET /api/v1/shelters as small blue dots; click one for its name.
+function addShelterLayer(map, shelters) {
+  map.addSource("shelters", { type: "geojson", data: shelters });
+  map.addLayer({
+    id: "shelters",
+    type: "circle",
+    source: "shelters",
+    paint: {
+      "circle-radius": 5,
+      "circle-color": SHELTER_COLOR,
+      "circle-stroke-color": "#ffffff",
+      "circle-stroke-width": 1.5,
+    },
+  });
+  map.on("click", "shelters", (event) => {
+    const feature = event.features[0];
+    popupFor(feature.properties.name, "Unverified: confirm with your barangay")
+      .setLngLat(feature.geometry.coordinates)
+      .addTo(map);
+  });
+  map.on("mouseenter", "shelters", () => (map.getCanvas().style.cursor = "pointer"));
+  map.on("mouseleave", "shelters", () => (map.getCanvas().style.cursor = ""));
+}
 
 function buildStyle(selectedYears) {
   const sources = {
@@ -70,8 +116,10 @@ function buildStyle(selectedYears) {
 
 // years / onYearsChange come from App, so the map and the /assess request use the same scenario.
 // The user picks the scenario. It is never picked from the cyclone category.
-export default function FloodMap({ years, onYearsChange }) {
+// location = the point we assessed; nearest = the nearest shelter (or null).
+export default function FloodMap({ years, onYearsChange, location, nearest }) {
   const [error, setError] = useState(null);
+  const [shelterError, setShelterError] = useState(null);
   const holderRef = useRef(null);
   const mapRef = useRef(null);
 
@@ -90,9 +138,54 @@ export default function FloodMap({ years, onYearsChange }) {
       console.error("Flood map error:", event.error);
       setError("Some map tiles could not load. Check your internet connection and reload the page.");
     });
+    map.once("load", () => (map.agapReady = true));
     mapRef.current = map;
     return () => map.remove();
   }, []);
+
+  // Shelter dots, loaded once.
+  useEffect(() => {
+    let cancelled = false;
+    getShelters()
+      .then((shelters) => {
+        if (!cancelled) whenReady(mapRef.current, () => addShelterLayer(mapRef.current, shelters));
+      })
+      .catch((err) => {
+        if (!cancelled) setShelterError(err.message);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // "You" marker at the assessed point; move the map there when it changes.
+  const lat = location?.latitude;
+  const lon = location?.longitude;
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || lat === undefined) return;
+    const marker = new maplibregl.Marker({ color: YOU_COLOR })
+      .setLngLat([lon, lat])
+      .setPopup(popupFor("You", "The location we checked"))
+      .addTo(map);
+    map.easeTo({ center: [lon, lat] });
+    return () => marker.remove();
+  }, [lat, lon]);
+
+  // The nearest shelter stands out as a bigger green marker.
+  const nearestId = nearest?.facility_id;
+  const nearestLat = nearest?.latitude;
+  const nearestLon = nearest?.longitude;
+  const nearestName = nearest?.name;
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !nearestId) return;
+    const marker = new maplibregl.Marker({ color: NEAREST_COLOR, scale: 1.1 })
+      .setLngLat([nearestLon, nearestLat])
+      .setPopup(popupFor(`Nearest: ${nearestName}`, "Unverified: confirm with your barangay"))
+      .addTo(map);
+    return () => marker.remove();
+  }, [nearestId, nearestLat, nearestLon, nearestName]);
 
   // Show only the selected scenario's layer.
   useEffect(() => {
@@ -103,8 +196,7 @@ export default function FloodMap({ years, onYearsChange }) {
         map.setLayoutProperty(scenario.layer, "visibility", scenario.years === years ? "visible" : "none");
       }
     };
-    if (map.isStyleLoaded()) showSelected();
-    else map.once("load", showSelected);
+    whenReady(map, showSelected);
   }, [years]);
 
   return (
@@ -129,6 +221,7 @@ export default function FloodMap({ years, onYearsChange }) {
         ))}
       </div>
 
+      {shelterError && <p className="flood-map-error">Shelter markers could not load ({shelterError}).</p>}
       {error && <p className="flood-map-error">{error} No color on the map does NOT mean an area is safe.</p>}
 
       <div ref={holderRef} className="flood-map-holder" />
@@ -142,9 +235,15 @@ export default function FloodMap({ years, onYearsChange }) {
         ))}
       </div>
 
+      <div className="flood-map-legend">
+        <span className="small"><span className="dot" style={{ background: YOU_COLOR }} />You</span>
+        <span className="small"><span className="dot" style={{ background: NEAREST_COLOR }} />Nearest shelter</span>
+        <span className="small"><span className="dot" style={{ background: SHELTER_COLOR }} />Shelters (unverified, OSM)</span>
+      </div>
+
       <p className="muted tiny">
         Areas with no color are not marked "safe". Basemap: Esri. Flood hazard: Project NOAH via
-        BetterGovPH (ODbL).
+        BetterGovPH (ODbL). Shelters: OpenStreetMap contributors (ODbL).
       </p>
     </section>
   );

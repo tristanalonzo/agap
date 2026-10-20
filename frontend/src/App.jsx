@@ -114,6 +114,7 @@ export default function App() {
         {tab === "Hazard Map" && (
           <HazardMapTab
             shelter={data.nearest_shelter}
+            location={data.location}
             time={data.generated_at}
             isStale={isLive && isStale}
             years={years}

@@ -7,7 +7,7 @@ Keep this file short and current. AI tools read it at the start of every session
 | Area | Owner | Status |
 |---|---|---|
 | Repo, skeleton, API contract, reviews | Tristan | skeleton done (#1); reviews ongoing |
-| Flood map (MapLibre + NOAH PMTiles) | Tristan | done (#2) |
+| Flood map (MapLibre + NOAH PMTiles) | Tristan | done (#2); shelters + you + nearest markers (`feat/map-shelters`) |
 | Backend: mock assess, hotlines, health, shelters endpoint | Marcus | done (#1 health, #4 mock `/assess`, hotlines, shelters) |
 | Backend: PAGASA rainfall-warning scraper | Marcus | done by Tristan (Claude Code), `feat/pagasa-scraper` |
 | Backend: qc_shelters.geojson + nearest shelter | Marcus | done by Tristan (Claude Code), `feat/shelters` |
@@ -53,3 +53,4 @@ Keep this file short and current. AI tools read it at the start of every session
 - 2026-10-20 — Tristan (Claude Code) — B2 on `feat/pagasa-scraper`: `services/pagasa.py` reads the NCR page's rainfall tab (fresh / stale / unavailable / parse_error; "none" only when PAGASA says so), 10-min cache, wired into `/assess`; fixtures + 6 tests, tests never use the network; 19 pytest tests pass. Live check: "no Heavy Rainfall Warning" → fresh / none.
 - 2026-10-20 — Tristan (Claude Code) — F3 rainfall wording on `feat/frontend-rainfall-wording`: `fresh` shows LIVE, "none" shows NO HEAVY RAINFALL WARNING, "unknown" says it does NOT mean no warning + PAGASA link, stale note, issued time, "Full advisory" expandable; checked live + with a dead PAGASA URL.
 - 2026-10-20 — Tristan (Claude Code) — F2 on `feat/frontend-live`: location (GPS button + manual lat/lon, default Quezon Memorial Circle), 60 s polling (paused when hidden / busy), Refresh, "Updated X min ago", STALE after 5 min, keeps last result on error + Retry, 422 message shown, flood years shared by map + request; "Live API" chip + honest mode bar. Pull-to-refresh cut.
+- 2026-10-20 — Tristan (Claude Code) — L3 on `feat/map-shelters`: map shows all 239 shelters (popup: name + "Unverified"), a "You" marker at the assessed point (map moves there), nearest shelter as a green marker, legend + OSM credit; checked at 390 px.
