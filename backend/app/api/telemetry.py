@@ -1,7 +1,6 @@
 """POST /api/v1/telemetry/assess — returns the object in docs/contract/assess.sample.json.
 
 Rejects coordinates outside the QC box (see config.py) with HTTP 422.
-Rainfall warning is "unavailable" until its service is built.
 """
 
 import uuid
@@ -21,6 +20,7 @@ from app.schemas import (
     RunContext,
 )
 from app.services.inference import get_cyclone_assessment
+from app.services.pagasa import get_rainfall_warning
 from app.services.shelters import nearest_shelter
 
 router = APIRouter(prefix="/api/v1/telemetry", tags=["telemetry"])
@@ -61,17 +61,7 @@ def assess(request: AssessRequest) -> AssessResponse:
             ),
         )
 
-    # Not built yet, so honestly "unavailable" / "unknown" (AGENTS.md safety rule 2).
-    rainfall_warning = RainfallWarning(
-        status="unavailable",
-        alert_level="unknown",
-        affected_area=None,
-        issued_at=None,
-        valid_until=None,
-        source_url=settings.PAGASA_URL,
-        retrieved_at=None,
-        raw_text=None,
-    )
+    rainfall_warning = get_rainfall_warning()
     flood_scenario = FloodScenario(
         source="Project NOAH hazard maps (BetterGovPH dataset)",
         selected_return_period_years=request.flood_return_period_years,

@@ -9,7 +9,7 @@ Keep this file short and current. AI tools read it at the start of every session
 | Repo, skeleton, API contract, reviews | Tristan | skeleton done (#1); reviews ongoing |
 | Flood map (MapLibre + NOAH PMTiles) | Tristan | done (#2) |
 | Backend: mock assess, hotlines, health, shelters endpoint | Marcus | done (#1 health, #4 mock `/assess`, hotlines, shelters) |
-| Backend: PAGASA rainfall-warning scraper | Marcus | not started |
+| Backend: PAGASA rainfall-warning scraper | Marcus | done by Tristan (Claude Code), `feat/pagasa-scraper` |
 | Backend: qc_shelters.geojson + nearest shelter | Marcus | done by Tristan (Claude Code), `feat/shelters` |
 | Frontend: app shell from mockup | Kurt | done (#3: Kurt's app, wired to the contract mock by Tristan) |
 | Frontend: connect to /assess, refresh + 60 s polling | Kurt | in progress: `USE_MOCK = false`, app calls the real `/assess` (Tristan, #6); refresh + polling (F2) not started |
@@ -30,6 +30,7 @@ Keep this file short and current. AI tools read it at the start of every session
 - 2026-10-17: Out of scope for now: historical replay, live Himawari download, SQLite, WebSockets, deployment.
 - 2026-10-20: Tristan takes the rest of Phase 2 (B2, B3, F2, F3, L3) for the progress check; owners in the table stay as the original plan.
 - 2026-10-20: Shelters use our own Overpass query (evacuation centres, barangay halls, community centres, covered courts), not the reference one, which returns mostly bus stops. Query is in `backend/app/services/shelters.py`.
+- 2026-10-20: PAGASA source = NCR regional page `https://bagong.pagasa.dost.gov.ph/regional-forecast/ncrprsd` ("Rainfall Warning" tab). The old `/weather/rainfall-warning` URL returned 404. Results cached 10 min (`PAGASA_CACHE_MINUTES`).
 
 ## Open questions (for Team A / Feudo)
 
@@ -49,3 +50,4 @@ Keep this file short and current. AI tools read it at the start of every session
 - 2026-10-20 — Tristan (Claude Code) — F3 hotlines part on `feat/frontend-hotlines`: Action / SOS tab lists all 6 numbers from `/api/v1/hotlines` (name, number, description, tap to call, verified date, LIVE badge); last good list cached in localStorage and shown as STALE offline; nothing cached = UNAVAILABLE + a 911 button; lint, build, pytest pass. Rainfall/shelter wording of F3 still open (Kurt).
 - 2026-10-20 — Tristan (Claude Code) — B3 on `feat/shelters`: `qc_shelters.geojson` (239 named OSM facilities in QC), Haversine nearest shelter in `/assess` (is_verified false), `/shelters` returns clean points, `data_status` built from real statuses; 13 pytest tests pass.
 - 2026-10-20 — Tristan (Claude Code) — F3 shelter card on `feat/frontend-shelter-card`: own LIVE/UNAVAILABLE badge (no longer copies the cyclone DEMO), distance in m/km "straight line", UNVERIFIED tag + "confirm with your barangay"; lint, build pass.
+- 2026-10-20 — Tristan (Claude Code) — B2 on `feat/pagasa-scraper`: `services/pagasa.py` reads the NCR page's rainfall tab (fresh / stale / unavailable / parse_error; "none" only when PAGASA says so), 10-min cache, wired into `/assess`; fixtures + 6 tests, tests never use the network; 19 pytest tests pass. Live check: "no Heavy Rainfall Warning" → fresh / none.
