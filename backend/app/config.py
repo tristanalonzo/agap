@@ -22,8 +22,11 @@ class Settings(BaseSettings):
     QC_LON_MIN: float = 120.98
     QC_LON_MAX: float = 121.14
 
-    # PAGASA rainfall-warning page that services/pagasa.py scrapes.
-    PAGASA_URL: str = "https://bagong.pagasa.dost.gov.ph/weather/rainfall-warning"
+    # PAGASA NCR regional page that services/pagasa.py scrapes (its "Rainfall Warning" tab).
+    # The old /weather/rainfall-warning page returned 404 when checked on 2026-10-20.
+    PAGASA_URL: str = "https://bagong.pagasa.dost.gov.ph/regional-forecast/ncrprsd"
+    # Ask PAGASA at most once per this many minutes; reuse the last good result in between.
+    PAGASA_CACHE_MINUTES: int = 10
 
     # True = return a fake cyclone result marked as demo. False = run the ONNX model.
     MOCK_INFERENCE: bool = True
