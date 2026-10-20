@@ -1,7 +1,7 @@
 """POST /api/v1/telemetry/assess — returns the object in docs/contract/assess.sample.json.
 
 Rejects coordinates outside the QC box (see config.py) with HTTP 422.
-Rainfall warning and nearest shelter are "unavailable" until their services are built.
+Rainfall warning is "unavailable" until its service is built.
 """
 
 import uuid
@@ -21,8 +21,25 @@ from app.schemas import (
     RunContext,
 )
 from app.services.inference import get_cyclone_assessment
+from app.services.shelters import nearest_shelter
 
 router = APIRouter(prefix="/api/v1/telemetry", tags=["telemetry"])
+
+
+# Component statuses that count as "we have no usable data for this".
+NOT_AVAILABLE = {"unavailable", "parse_error", "no_shelter_data"}
+
+
+def build_data_status(rainfall: RainfallWarning, shelter: NearestShelter) -> DataStatus:
+    """Summarise which parts of the response are stale or missing."""
+    statuses = {"rainfall_warning": rainfall.status, "nearest_shelter": shelter.status}
+    unavailable = [name for name, status in statuses.items() if status in NOT_AVAILABLE]
+    stale = [name for name, status in statuses.items() if status == "stale"]
+    return DataStatus(
+        overall="partial" if unavailable or stale else "complete",
+        stale_components=stale,
+        unavailable_components=unavailable,
+    )
 
 
 def is_inside_qc(latitude: float, longitude: float) -> bool:
@@ -62,15 +79,7 @@ def assess(request: AssessRequest) -> AssessResponse:
         is_live_forecast=False,
         lookup_status="not_implemented",
     )
-    nearest_shelter = NearestShelter(
-        status="unavailable",
-        facility_id=None,
-        name=None,
-        latitude=None,
-        longitude=None,
-        distance_m=None,
-        is_verified=None,
-    )
+    shelter = nearest_shelter(request.latitude, request.longitude)
 
     return AssessResponse(
         assessment_id=str(uuid.uuid4()),
@@ -85,10 +94,6 @@ def assess(request: AssessRequest) -> AssessResponse:
         cyclone_assessment=get_cyclone_assessment(),
         rainfall_warning=rainfall_warning,
         flood_scenario=flood_scenario,
-        nearest_shelter=nearest_shelter,
-        data_status=DataStatus(
-            overall="partial",
-            stale_components=[],
-            unavailable_components=["rainfall_warning", "nearest_shelter"],
-        ),
+        nearest_shelter=shelter,
+        data_status=build_data_status(rainfall_warning, shelter),
     )

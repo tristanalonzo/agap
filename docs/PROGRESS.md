@@ -10,7 +10,7 @@ Keep this file short and current. AI tools read it at the start of every session
 | Flood map (MapLibre + NOAH PMTiles) | Tristan | done (#2) |
 | Backend: mock assess, hotlines, health, shelters endpoint | Marcus | done (#1 health, #4 mock `/assess`, hotlines, shelters) |
 | Backend: PAGASA rainfall-warning scraper | Marcus | not started |
-| Backend: qc_shelters.geojson + nearest shelter | Marcus | not started |
+| Backend: qc_shelters.geojson + nearest shelter | Marcus | done by Tristan (Claude Code), `feat/shelters` |
 | Frontend: app shell from mockup | Kurt | done (#3: Kurt's app, wired to the contract mock by Tristan) |
 | Frontend: connect to /assess, refresh + 60 s polling | Kurt | in progress: `USE_MOCK = false`, app calls the real `/assess` (Tristan, #6); refresh + polling (F2) not started |
 | Frontend: status badges + hotlines screen | Kurt | in progress: `StatusBadge` done (#3); hotlines screen done (Tristan, #7); rainfall/shelter card wording not started |
@@ -28,6 +28,8 @@ Keep this file short and current. AI tools read it at the start of every session
 - 2026-10-17: Final integration = Luke + Kurt. Tristan reviews.
 - 2026-10-17: Kurt = frontend, Marcus = backend.
 - 2026-10-17: Out of scope for now: historical replay, live Himawari download, SQLite, WebSockets, deployment.
+- 2026-10-20: Tristan takes the rest of Phase 2 (B2, B3, F2, F3, L3) for the progress check; owners in the table stay as the original plan.
+- 2026-10-20: Shelters use our own Overpass query (evacuation centres, barangay halls, community centres, covered courts), not the reference one, which returns mostly bus stops. Query is in `backend/app/services/shelters.py`.
 
 ## Open questions (for Team A / Feudo)
 
@@ -45,3 +47,4 @@ Keep this file short and current. AI tools read it at the start of every session
 - 2026-10-20 — Marcus (Claude Code) — B1 on `feat/backend-assess-mock`: schemas match the contract, mock `/assess` (DEMO cyclone, rainfall + shelter "unavailable", QC-box 422), `/hotlines`, `/shelters` (empty FeatureCollection until B3); 7 pytest tests pass.
 - 2026-10-20 — Tristan (Claude Code) — `feat/use-real-api`: `USE_MOCK = false`, the app now calls the real backend `/assess` (cyclone DEMO, rainfall + shelter honestly "unavailable"); all tabs checked in the browser.
 - 2026-10-20 — Tristan (Claude Code) — F3 hotlines part on `feat/frontend-hotlines`: Action / SOS tab lists all 6 numbers from `/api/v1/hotlines` (name, number, description, tap to call, verified date, LIVE badge); last good list cached in localStorage and shown as STALE offline; nothing cached = UNAVAILABLE + a 911 button; lint, build, pytest pass. Rainfall/shelter wording of F3 still open (Kurt).
+- 2026-10-20 — Tristan (Claude Code) — B3 on `feat/shelters`: `qc_shelters.geojson` (239 named OSM facilities in QC), Haversine nearest shelter in `/assess` (is_verified false), `/shelters` returns clean points, `data_status` built from real statuses; 13 pytest tests pass.

@@ -1,22 +1,31 @@
-"""GET /api/v1/shelters — returns the contents of static/qc_shelters.geojson for map markers.
+"""GET /api/v1/shelters — every shelter point from static/qc_shelters.geojson, for map markers.
 
-If the file doesn't exist yet (task B3 adds it), returns an empty FeatureCollection.
+Polygons are already turned into one point each (services/shelters.py). Every shelter is
+is_verified false (AGENTS.md safety rule 5). If the file is missing, the list is empty.
 """
 
-import json
-from pathlib import Path
 from typing import Any
 
 from fastapi import APIRouter
 
-router = APIRouter(prefix="/api/v1", tags=["shelters"])
+from app.services.shelters import get_shelters
 
-SHELTERS_FILE = Path(__file__).parent.parent / "static" / "qc_shelters.geojson"
+router = APIRouter(prefix="/api/v1", tags=["shelters"])
 
 
 @router.get("/shelters")
-def get_shelters() -> dict[str, Any]:
-    if not SHELTERS_FILE.exists():
-        return {"type": "FeatureCollection", "features": []}
-    with open(SHELTERS_FILE, encoding="utf-8") as file:
-        return json.load(file)
+def list_shelters() -> dict[str, Any]:
+    features = [
+        {
+            "type": "Feature",
+            "id": shelter["facility_id"],
+            "geometry": {"type": "Point", "coordinates": [shelter["longitude"], shelter["latitude"]]},
+            "properties": {
+                "facility_id": shelter["facility_id"],
+                "name": shelter["name"],
+                "is_verified": False,
+            },
+        }
+        for shelter in get_shelters()
+    ]
+    return {"type": "FeatureCollection", "features": features}
