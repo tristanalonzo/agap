@@ -6,16 +6,17 @@ function formatDistance(meters) {
   return meters < 1000 ? `${meters} m` : `${(meters / 1000).toFixed(1)} km`;
 }
 
-export default function HazardMapTab({ shelter, time }) {
+export default function HazardMapTab({ shelter, time, isStale, years, onYearsChange }) {
   const available = shelter.status === "available";
+  const badgeStatus = !available ? "unavailable" : isStale ? "stale" : "live";
 
   return (
     <>
-      <FloodMap />
+      <FloodMap years={years} onYearsChange={onYearsChange} />
 
       <div className="section-head">
         <h3>Nearest Evacuation Shelter</h3>
-        <StatusBadge status={available ? "live" : "unavailable"} time={time} />
+        <StatusBadge status={badgeStatus} time={time} />
       </div>
 
       {available ? (

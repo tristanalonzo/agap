@@ -525,3 +525,38 @@ body {
 .advisory p { margin-top: 6px; white-space: pre-line; }
 .warning-text { font-size: 12px; color: #92400e; margin: 8px 0; }
 .load-error { color: #991b1b; }
+
+/* ---------- Refresh + location (F2) ---------- */
+.btn {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn.secondary { background: var(--card); color: var(--primary); border: 1px solid var(--primary); }
+.small-btn { padding: 4px 10px; font-size: 12px; }
+.link-btn { background: none; border: none; color: var(--primary); font-weight: 700; cursor: pointer; padding: 0; }
+.refresh-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 12px;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+}
+.refresh-error { padding: 6px 12px; background: #fef2f2; }
+.location-controls { display: flex; flex-direction: column; gap: 8px; }
+.location-buttons { display: flex; gap: 8px; }
+.manual-location { display: flex; gap: 8px; align-items: flex-end; flex-wrap: wrap; }
+.manual-location label { display: flex; flex-direction: column; gap: 2px; }
+.manual-location input {
+  width: 110px;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-family: var(--font-mono);
+}
