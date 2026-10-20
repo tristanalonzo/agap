@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { civilDefense, checklistItems, hotlines } from "../data/safety";
+import { civilDefense, checklistItems } from "../data/safety";
 import StatusBadge from "./StatusBadge";
+import HotlinesSection from "./HotlinesSection";
 
 export default function ActionTab({ rainfall }) {
   // No known alert level (for example PAGASA could not be loaded) = no order shown.
@@ -39,18 +40,7 @@ export default function ActionTab({ rainfall }) {
         ))}
       </section>
 
-      <div className="section-head">
-        <p className="mono tiny muted">EMERGENCY HOTLINES:</p>
-        <span className="green-text mono tiny">QC VERIFIED</span>
-      </div>
-      <div className="hotline-grid">
-        {hotlines.map((h) => (
-          <a className="hotline" key={h.number} href={`tel:${h.number}`}>
-            <span className="bold">{h.label}</span>
-            <span className="mono tiny muted">{h.sub}</span>
-          </a>
-        ))}
-      </div>
+      <HotlinesSection />
     </>
   );
 }

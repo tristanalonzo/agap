@@ -456,25 +456,24 @@ body {
 }
 .check-row input { width: 20px; height: 20px; margin-top: 1px; flex: none; }
 .struck { text-decoration: line-through; color: var(--muted); }
-.hotline-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+.hotline-list {
+  display: flex;
+  flex-direction: column;
   gap: 8px;
 }
-.hotline {
+.hotline-row {
   background: #fff;
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 12px 6px;
+  padding: 12px 14px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  text-align: center;
-  font-size: 13px;
+  gap: 2px;
+  font-size: 14px;
   color: var(--text);
   text-decoration: none;
 }
+.hotline-row .mono.small { color: var(--primary); }
 /* ---------- Leaflet map ---------- */
 .leaflet-holder {
   position: absolute;
