@@ -4,7 +4,13 @@ Change a value by setting the env var or adding it to backend/.env.
 Every setting has a safe default so the app runs with no .env at all.
 """
 
+from datetime import timedelta, timezone
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+# Philippine time (UTC+8). Manila has no daylight saving, so a fixed offset is exact
+# and avoids the extra tzdata package that ZoneInfo needs on Windows.
+MANILA_TZ = timezone(timedelta(hours=8), "Asia/Manila")
 
 
 class Settings(BaseSettings):

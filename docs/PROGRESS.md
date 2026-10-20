@@ -41,3 +41,4 @@ Keep this file short and current. AI tools read it at the start of every session
 - 2026-10-19 — Tristan (Claude Code) — L2 flood map on `feat/flood-map` (from Kurt's branch): `FloodMap.jsx` with MapLibre + NOAH PMTiles (layers flood_5yr/25yr/100yr, `Var` 1–3), 5/25/100 toggle default 25.
 - 2026-10-20 — Tristan (Claude Code) — Covered F1 on `feat/frontend-base` (from Kurt's branch): proxy, `client.js` + contract mock, cards read the contract, StatusBadge, scenario chips labelled DEMO.
 - 2026-10-20 — Tristan (Claude Code) — L2 moved onto main: `FloodMap` replaces Kurt's Leaflet map on the Hazard Map tab (`QcMap.jsx`, `hazard.js`, `leaflet` now unused).
+- 2026-10-20 — Marcus (Claude Code) — B1 on `feat/backend-assess-mock`: schemas match the contract, mock `/assess` (DEMO cyclone, rainfall + shelter "unavailable", QC-box 422), `/hotlines`, `/shelters` (empty FeatureCollection until B3); 7 pytest tests pass.
