@@ -13,7 +13,7 @@ Keep this file short and current. AI tools read it at the start of every session
 | Backend: qc_shelters.geojson + nearest shelter | Marcus | done by Tristan (Claude Code), `feat/shelters` |
 | Frontend: app shell from mockup | Kurt | done (#3: Kurt's app, wired to the contract mock by Tristan) |
 | Frontend: connect to /assess, refresh + 60 s polling | Kurt | in progress: `USE_MOCK = false`, app calls the real `/assess` (Tristan, #6); refresh + polling (F2) not started |
-| Frontend: status badges + hotlines screen | Kurt | in progress: `StatusBadge` done (#3); hotlines screen done (Tristan, #7); rainfall/shelter card wording not started |
+| Frontend: status badges + hotlines screen | Kurt | in progress: `StatusBadge` done (#3); hotlines screen done (Tristan, #7); shelter card done (Tristan, `feat/frontend-shelter-card`); rainfall card wording not started |
 | Model integration (Phase 3) | Luke + Kurt | waiting on Team A |
 
 ## Dates
@@ -48,3 +48,4 @@ Keep this file short and current. AI tools read it at the start of every session
 - 2026-10-20 — Tristan (Claude Code) — `feat/use-real-api`: `USE_MOCK = false`, the app now calls the real backend `/assess` (cyclone DEMO, rainfall + shelter honestly "unavailable"); all tabs checked in the browser.
 - 2026-10-20 — Tristan (Claude Code) — F3 hotlines part on `feat/frontend-hotlines`: Action / SOS tab lists all 6 numbers from `/api/v1/hotlines` (name, number, description, tap to call, verified date, LIVE badge); last good list cached in localStorage and shown as STALE offline; nothing cached = UNAVAILABLE + a 911 button; lint, build, pytest pass. Rainfall/shelter wording of F3 still open (Kurt).
 - 2026-10-20 — Tristan (Claude Code) — B3 on `feat/shelters`: `qc_shelters.geojson` (239 named OSM facilities in QC), Haversine nearest shelter in `/assess` (is_verified false), `/shelters` returns clean points, `data_status` built from real statuses; 13 pytest tests pass.
+- 2026-10-20 — Tristan (Claude Code) — F3 shelter card on `feat/frontend-shelter-card`: own LIVE/UNAVAILABLE badge (no longer copies the cyclone DEMO), distance in m/km "straight line", UNVERIFIED tag + "confirm with your barangay"; lint, build pass.
