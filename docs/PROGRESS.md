@@ -12,7 +12,7 @@ Keep this file short and current. AI tools read it at the start of every session
 | Backend: PAGASA rainfall-warning scraper | Marcus | not started |
 | Backend: qc_shelters.geojson + nearest shelter | Marcus | not started |
 | Frontend: app shell from mockup | Kurt | done (#3: Kurt's app, wired to the contract mock by Tristan) |
-| Frontend: connect to /assess, refresh + 60 s polling | Kurt | not started (`client.js` + mock ready, `USE_MOCK = true`) |
+| Frontend: connect to /assess, refresh + 60 s polling | Kurt | in progress: `USE_MOCK = false`, app calls the real `/assess` (Tristan, `feat/use-real-api`); refresh + polling (F2) not started |
 | Frontend: status badges + hotlines screen | Kurt | in progress: `StatusBadge` done (#3); hotlines screen not started |
 | Model integration (Phase 3) | Luke + Kurt | waiting on Team A |
 
