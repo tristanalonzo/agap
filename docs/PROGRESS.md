@@ -43,3 +43,4 @@ Keep this file short and current. AI tools read it at the start of every session
 - 2026-10-20 — Tristan (Claude Code) — L2 moved onto main: `FloodMap` replaces Kurt's Leaflet map on the Hazard Map tab (`QcMap.jsx`, `hazard.js`, `leaflet` now unused).
 - 2026-10-20 — Tristan (Claude Code) — #2 + #3 merged: `main` runs the app on mock data (DEMO labels, NOAH flood map); pytest, lint, build pass; waiting on Marcus's B1 `/assess`.
 - 2026-10-20 — Marcus (Claude Code) — B1 on `feat/backend-assess-mock`: schemas match the contract, mock `/assess` (DEMO cyclone, rainfall + shelter "unavailable", QC-box 422), `/hotlines`, `/shelters` (empty FeatureCollection until B3); 7 pytest tests pass.
+- 2026-10-20 — Tristan (Claude Code) — `feat/use-real-api`: `USE_MOCK = false`, the app now calls the real backend `/assess` (cyclone DEMO, rainfall + shelter honestly "unavailable"); all tabs checked in the browser.
