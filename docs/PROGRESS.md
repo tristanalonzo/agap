@@ -12,8 +12,8 @@ Keep this file short and current. AI tools read it at the start of every session
 | Backend: PAGASA rainfall-warning scraper | Marcus | not started |
 | Backend: qc_shelters.geojson + nearest shelter | Marcus | not started |
 | Frontend: app shell from mockup | Kurt | done (#3: Kurt's app, wired to the contract mock by Tristan) |
-| Frontend: connect to /assess, refresh + 60 s polling | Kurt | in progress: `USE_MOCK = false`, app calls the real `/assess` (Tristan, `feat/use-real-api`); refresh + polling (F2) not started |
-| Frontend: status badges + hotlines screen | Kurt | in progress: `StatusBadge` done (#3); hotlines screen not started |
+| Frontend: connect to /assess, refresh + 60 s polling | Kurt | in progress: `USE_MOCK = false`, app calls the real `/assess` (Tristan, #6); refresh + polling (F2) not started |
+| Frontend: status badges + hotlines screen | Kurt | in progress: `StatusBadge` done (#3); hotlines screen done (Tristan, #7); rainfall/shelter card wording not started |
 | Model integration (Phase 3) | Luke + Kurt | waiting on Team A |
 
 ## Dates
@@ -44,3 +44,4 @@ Keep this file short and current. AI tools read it at the start of every session
 - 2026-10-20 — Tristan (Claude Code) — #2 + #3 merged: `main` runs the app on mock data (DEMO labels, NOAH flood map); pytest, lint, build pass; waiting on Marcus's B1 `/assess`.
 - 2026-10-20 — Marcus (Claude Code) — B1 on `feat/backend-assess-mock`: schemas match the contract, mock `/assess` (DEMO cyclone, rainfall + shelter "unavailable", QC-box 422), `/hotlines`, `/shelters` (empty FeatureCollection until B3); 7 pytest tests pass.
 - 2026-10-20 — Tristan (Claude Code) — `feat/use-real-api`: `USE_MOCK = false`, the app now calls the real backend `/assess` (cyclone DEMO, rainfall + shelter honestly "unavailable"); all tabs checked in the browser.
+- 2026-10-20 — Tristan (Claude Code) — F3 hotlines part on `feat/frontend-hotlines`: Action / SOS tab lists all 6 numbers from `/api/v1/hotlines` (name, number, description, tap to call, verified date, LIVE badge); last good list cached in localStorage and shown as STALE offline; nothing cached = UNAVAILABLE + a 911 button; lint, build, pytest pass. Rainfall/shelter wording of F3 still open (Kurt).

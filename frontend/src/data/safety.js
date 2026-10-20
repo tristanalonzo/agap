@@ -48,10 +48,3 @@ export const checklistItems = [
   "Keep all family members physically together; avoid travel outdoors.",
   "Stay in lowest-level interior corridors away from glass.",
 ];
-
-// Source: design mockup. TODO: replace with qc_hotlines.json
-export const hotlines = [
-  { number: "122", label: "QC 122", sub: "QCDRRMO EOC" },
-  { number: "911", label: "NATIONAL 911", sub: "Inter-Agency" },
-  { number: "143", label: "RED CROSS 143", sub: "Rescue / Triage" },
-];
