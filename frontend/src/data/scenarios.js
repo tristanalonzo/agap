@@ -1,9 +1,9 @@
 export const scenarios = [
-  // This chip shows the mock API response (docs/contract/assess.sample.json), not live data.
+  // This chip shows the real backend response. Its cyclone result is still DEMO (no model yet).
   {
     id: "live",
-    chip: "Mock API",
-    mode: "Mock API response (contract sample)",
+    chip: "Live API",
+    mode: "Backend API",
   },
   // The replay chips below are example values from the design mockup.
   {

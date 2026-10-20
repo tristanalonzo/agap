@@ -68,9 +68,9 @@ function buildStyle(selectedYears) {
   return { version: 8, sources, layers };
 }
 
-export default function FloodMap() {
-  // The user picks the scenario. It is never picked from the cyclone category.
-  const [years, setYears] = useState(DEFAULT_YEARS);
+// years / onYearsChange come from App, so the map and the /assess request use the same scenario.
+// The user picks the scenario. It is never picked from the cyclone category.
+export default function FloodMap({ years, onYearsChange }) {
   const [error, setError] = useState(null);
   const holderRef = useRef(null);
   const mapRef = useRef(null);
@@ -122,7 +122,7 @@ export default function FloodMap() {
           <button
             key={scenario.years}
             className={scenario.years === years ? "active" : ""}
-            onClick={() => setYears(scenario.years)}
+            onClick={() => onYearsChange(scenario.years)}
           >
             {scenario.label}
           </button>

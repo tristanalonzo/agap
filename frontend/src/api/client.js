@@ -14,6 +14,12 @@ export async function getAssessment(lat, lon, years) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ latitude: lat, longitude: lon, flood_return_period_years: years }),
   });
+  if (response.status === 422) {
+    // The backend explains what is wrong, e.g. "Location (...) is outside Quezon City."
+    const body = await response.json().catch(() => null);
+    const detail = typeof body?.detail === "string" ? body.detail : "Invalid location or flood scenario.";
+    throw new Error(detail);
+  }
   if (!response.ok) {
     throw new Error(`Assessment request failed (HTTP ${response.status})`);
   }
@@ -24,6 +30,14 @@ export async function getHotlines() {
   const response = await fetch("/api/v1/hotlines");
   if (!response.ok) {
     throw new Error(`Hotlines request failed (HTTP ${response.status})`);
+  }
+  return response.json();
+}
+
+export async function getShelters() {
+  const response = await fetch("/api/v1/shelters");
+  if (!response.ok) {
+    throw new Error(`Shelters request failed (HTTP ${response.status})`);
   }
   return response.json();
 }
