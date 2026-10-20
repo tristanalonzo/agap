@@ -474,6 +474,7 @@ body {
   text-decoration: none;
 }
 .hotline-row .mono.small { color: var(--primary); }
+.hotline-verified { margin: -4px 2px 8px; }
 /* ---------- Leaflet map ---------- */
 .leaflet-holder {
   position: absolute;
