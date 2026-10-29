@@ -1,4 +1,4 @@
-# Demo script — about 3 minutes
+# Demo script — about 3½ minutes
 
 Rehearse this twice on the actual demo laptop before the defense. Timings are a guide, not a
 target; the last beat is the one that matters, so do not let the earlier ones run long.
@@ -9,6 +9,7 @@ target; the last beat is the one that matters, so do not let the earlier ones ru
 - [ ] Frontend running (`npm run dev`), app open at http://localhost:5173 in device/phone view
 - [ ] Browser zoom at 100%, console closed, notifications off
 - [ ] Refresh once so "Updated just now" is fresh when you start
+- [ ] Backend terminal visible and practised: the honesty beat needs **Ctrl+C**, **↑**, **Enter**
 - [ ] Backup video and screenshots on the desktop, in case the Wi-Fi dies (see the end)
 - [ ] Know your own answer to "is this a real warning app?" — it is not, and say so first
 
@@ -49,16 +50,36 @@ open evacuation centre. The card tells the user to confirm with their barangay."
 Tap one and let the phone dialer open. "Six numbers, from the QC government, with the date we
 last checked them."
 
-**2:30 — The honesty feature (30s). Do not skip this one.**
-Turn off the Wi-Fi.
-- Within a minute the rainfall card goes **UNAVAILABLE** and the alert level reads `unknown`.
-- The bar at the top turns to **STALE** with the age of the last good update.
-- The hotlines stay, badged **STALE**, from the last good list.
+**2:30 — The honesty feature (45s). Do not skip this one.**
 
-"This is the part we are proudest of. A disaster app that says 'no warning' because its internet
-dropped is worse than no app. When the fetch fails we say `unknown`, never 'no warning', and the
-card keeps its last known text with a timestamp so the user can judge it themselves."
-Turn the Wi-Fi back on and refresh to recover.
+*Part 1 — PAGASA unreachable.* Overview tab. Turn off the Wi-Fi. In the backend terminal press
+**Ctrl+C**, then **↑** and **Enter** to start it again. Click **Refresh** in the app.
+- The banner reads **UNKNOWN — not loaded**, badged **UNAVAILABLE**.
+- The rainfall card says *"This does NOT mean there is no warning. Check PAGASA directly."*
+
+"A disaster app that says 'no warning' because its internet dropped is worse than no app. When
+we can't reach PAGASA and have nothing recent, we say unknown — never 'no warning'."
+
+> **Why the restart is not optional.** The backend keeps the last good PAGASA reading for 10
+> minutes so it does not hammer PAGASA's site. Turning off the Wi-Fi alone changes nothing on
+> screen for up to 10 minutes — and after that it shows the *old* reading marked STALE, not
+> unknown, because an old real reading is more useful than none. Restarting empties that memory,
+> so the failure shows at once. Checked on 2026-10-29.
+
+*Part 2 — the server itself unreachable.* Press **Ctrl+C** in the backend terminal and leave it
+stopped. Click **Refresh**.
+- A line appears: *"Couldn't update … Showing the last result."* with **Retry**. The cards keep
+  their last data and timestamps rather than going blank.
+- Tap another tab, then **Action / SOS** again. The hotlines are now badged **STALE**, under
+  *"Showing a cached list, may be outdated"* — and still tappable. (This works because you opened
+  the hotlines at 2:15 while the server was up; that visit is what filled the cache.)
+
+"With no server at all, the emergency numbers are still on the phone — labelled as old, not hidden."
+
+To recover: **↑** and **Enter** in the backend terminal, Wi-Fi back on, **Refresh**.
+
+Do not promise that the bar at the top turns STALE. It only does once the last good update is
+over 5 minutes old, which will not happen inside this beat.
 
 ## If they ask
 
@@ -66,11 +87,15 @@ Turn the Wi-Fi back on and refresh to recover.
   PAGASA wind signals account for terrain and lead time; this does not, and the card says so.
 - **"Why is the shelter distance straight-line?"** Routing needs a road-network service we did
   not have. The card labels it rather than implying a walking time we cannot compute.
-- **"Can it work offline?"** Partly. Hotlines and the last assessment are cached and shown as
-  STALE. The map needs the internet, because the tiles are downloaded.
-- **"What is left?"** The real model. The seam is built — flip one setting and it runs — but
-  the model and its preprocessing come from Team A, and we still need to decide which satellite
-  frames to feed it.
+- **"Can it work offline?"** Partly, and it depends what is offline. With no internet but the
+  server running, everything but the map keeps working: shelters and hotlines are files on our
+  server, and rainfall shows the last PAGASA reading — marked STALE once it is old, or `unknown`
+  if there is none. With the server down too, the app keeps its last result and the hotlines come
+  from the phone's own cache, marked STALE. The map always needs the internet for its tiles.
+- **"What is left?"** The real model. The code that runs it is built and tested, but it needs two
+  things from Team A — the model and its preprocessing details — and one decision from us: which
+  satellite frames to feed it. The app only knows your location, not an image, so turning the
+  model on today would honestly report "unavailable" rather than a category.
 
 ## The replay chips
 
@@ -83,7 +108,8 @@ versus the official category" view is not built.
 
 Keep going and narrate. A prototype failing live is a better story than a frozen screen.
 - Map blank → "the tiles need internet" and move on to the shelter card, which still works.
-- Backend down → the app shows its error state with a Retry button; that is a real state worth
-  showing. Restart uvicorn in the other terminal.
+- Backend down → if the app had loaded, it keeps the last result with a "Couldn't update" line;
+  if not, it shows an error screen. Both have **Retry**, and both are real states worth showing.
+  Restart uvicorn in the other terminal.
 - Everything down → switch to the backup video. Record it the night before and keep it on the
   desktop, not in the cloud.

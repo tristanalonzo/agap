@@ -36,7 +36,7 @@ covers it.
 |---|---|---|
 | Git | any recent | `git --version` |
 | Python | **3.14** (not 3.15 — no onnxruntime build yet) | `py --version` |
-| Node.js | 20 or newer | `node -v` |
+| Node.js | **20.19+ or 22.12+** (Vite 8 refuses older ones) | `node -v` |
 
 If `py --version` shows something other than 3.14, install 3.14 from python.org and use
 `py -3.14` in place of `py` below. `py --list` shows every version you have.
@@ -79,15 +79,20 @@ scripts by default. Run this once, then try again:
 Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 ```
 
-**The app loads but every card says it could not load** — the backend is not running, or it
-is on the wrong port. It must be on 8000. Check http://127.0.0.1:8000/health/live shows
+**The app shows "Could not load data"** — the backend is not running, or it is on the
+wrong port. It must be on 8000. Check http://127.0.0.1:8000/health/live shows
 `{"status":"ok"}`.
 
 **The map area is blank or grey** — the flood tiles and basemap are downloaded from the
-internet, so the map needs a connection. The rest of the app works offline from cached data.
+internet, so the map needs a connection. Everything else keeps working without internet as
+long as the backend runs: shelters and hotlines are files it serves, and rainfall reuses the
+last PAGASA reading (see below).
 
-**Rainfall says UNAVAILABLE** — PAGASA's page is down or unreachable. That is the app
-behaving correctly: it refuses to guess. It will recover on the next refresh.
+**Rainfall says STALE or UNAVAILABLE** — PAGASA's page could not be reached. The backend keeps
+the last good reading for 10 minutes; after that it shows that old reading marked **STALE**, or
+**UNAVAILABLE** with alert level `unknown` if it never had one. That is the app behaving
+correctly: it refuses to guess, and never turns a failed fetch into "no warning". It recovers on
+its own once PAGASA is reachable.
 
 ## How the project is laid out
 
