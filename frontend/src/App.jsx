@@ -22,6 +22,15 @@ function markStale(data) {
   return { ...data, rainfall_warning: { ...data.rainfall_warning, status: "stale" } };
 }
 
+// What the mode bar says about the cyclone card. Read from the response, not hard-coded,
+// so the bar stops saying DEMO the moment the backend serves a real model result and says
+// so honestly when there is no result at all (AGENTS.md safety rules 1, 4 and 6).
+function cycloneNote(cyclone) {
+  if (cyclone.is_demo) return "Cyclone card is DEMO (no model yet)";
+  if (cyclone.status === "live") return "Cyclone is a model estimate, not a PAGASA signal";
+  return "Cyclone estimate unavailable";
+}
+
 export default function App() {
   const [scenarioId, setScenarioId] = useState("live");
   const [tab, setTab] = useState("Overview");
@@ -74,7 +83,8 @@ export default function App() {
       <div className="mode-bar">
         {isLive ? (
           <>
-            <strong>MODE: LIVE API</strong> · Rainfall + shelter are real · Cyclone card is DEMO (no model yet)
+            <strong>MODE: LIVE API</strong> · Rainfall + shelter are real ·{" "}
+            {cycloneNote(data.cyclone_assessment)}
           </>
         ) : (
           <>

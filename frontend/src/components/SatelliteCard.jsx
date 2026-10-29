@@ -28,7 +28,10 @@ export default function SatelliteCard({ cyclone, visual }) {
         </div>
         <div className="box">
           <p className="box-label">MODEL VERSION</p>
-          <p className="ref-name mono">{cyclone.model_version ?? "None (mock)"}</p>
+          {/* "(mock)" only when it really is the mock, for the same reason as the mode bar. */}
+          <p className="ref-name mono">
+            {cyclone.model_version ?? (cyclone.is_demo ? "None (mock)" : "None")}
+          </p>
           <p className="small mono">Confidence: {cyclone.confidence ?? "n/a"}</p>
         </div>
       </div>
