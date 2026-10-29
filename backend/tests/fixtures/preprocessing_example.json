@@ -1,0 +1,11 @@
+{
+  "_comment": "Example only, for tests. NOT Team A's real values -- they still owe us the real file (docs/PROGRESS.md). Do not copy this into app/static/.",
+  "input_name": "input",
+  "input_shape": [1, 1, 201, 201],
+  "dtype": "float32",
+  "class_order": ["TD", "TS", "STS", "TY", "STY"],
+  "normalization": {
+    "steps": ["example: not Team A's real normalization"]
+  },
+  "model_version": "example-0.0.0"
+}
