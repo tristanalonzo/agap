@@ -18,7 +18,8 @@ target; the last beat is the one that matters, so do not let the earlier ones ru
 **0:00 — What it is (20s).**
 "AGAP shows a Quezon City resident four things for their own location: a cyclone category,
 the live PAGASA rainfall warning, a flood hazard map, and their nearest evacuation shelter.
-It is a prototype, not an official warning service, and the app says so on every card."
+It is a prototype, not an official warning service — so every card shows where its data comes
+from and how fresh it is, and the one fake card says it is fake."
 
 **0:20 — Location (15s).**
 Overview tab. Point at the location card: Quezon City, coordinates, QC BOUNDS OK.
@@ -47,8 +48,8 @@ tagged **UNVERIFIED**, because they come from OpenStreetMap, which does not prov
 open evacuation centre. The card tells the user to confirm with their barangay."
 
 **2:15 — Hotlines (15s).** Action / SOS tab, scroll to the hotlines.
-Tap one and let the phone dialer open. "Six numbers, from the QC government, with the date we
-last checked them."
+Tap one and let the phone dialer open. "Six numbers — QC's own lines, plus 911 and the Red
+Cross — each labelled with who runs it, and the date we last checked them."
 
 **2:30 — The honesty feature (45s). Do not skip this one.**
 

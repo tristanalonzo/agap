@@ -20,7 +20,7 @@ Every card in the app shows its own status badge and a timestamp, so you can alw
 | Rainfall warning | **Real**, scraped live | PAGASA NCR regional forecast page |
 | Nearest shelter | **Real**, 239 facilities | OpenStreetMap, marked UNVERIFIED |
 | Flood hazard map | **Real**, static scenarios | Project NOAH via BetterGovPH |
-| Hotlines | **Real**, 6 numbers | Quezon City government, verified Oct 13 2026 |
+| Hotlines | **Real**, 6 numbers | 4 Quezon City government lines, plus national 911 and Philippine Red Cross 143; verified Oct 13 2026 |
 | Cyclone category | **DEMO — fake data** | No model yet. Always badged DEMO |
 
 The cyclone card is a placeholder until Team A delivers the ONNX model. It is never shown as
@@ -114,7 +114,8 @@ what: [docs/PROGRESS.md](docs/PROGRESS.md). The API response shape both sides fo
 - Rainfall warnings: DOST-PAGASA
 - Shelters: OpenStreetMap contributors (ODbL) — unverified, confirm with your barangay
 - Basemap: Esri
-- Hotlines: Quezon City government
+- Hotlines: Quezon City government (122, QCDRRMO, trunkline), national emergency hotline 911,
+  and the Philippine Red Cross (143)
 
 ## Disclaimer
 
