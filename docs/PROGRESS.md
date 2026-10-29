@@ -14,7 +14,7 @@ Keep this file short and current. AI tools read it at the start of every session
 | Frontend: app shell from mockup | Kurt | done (#3: Kurt's app, wired to the contract mock by Tristan) |
 | Frontend: connect to /assess, refresh + 60 s polling | Kurt | done by Tristan: real API (#6), polling + location + refresh (`feat/frontend-live`); pull-to-refresh not built |
 | Frontend: status badges + hotlines screen | Kurt | in progress: `StatusBadge` done (#3); hotlines screen done (Tristan, #7); shelter card done (Tristan, #9); rainfall card wording done (Tristan, `feat/frontend-rainfall-wording`) |
-| Model integration (Phase 3) | Luke + Kurt | waiting on Team A |
+| Model integration (Phase 3) | Luke + Kurt | backend seam ready (`feat/inference-seam`): drop in the `.onnx` + `preprocessing.json`, pick a frame source, unskip `test_inference.py`. Still waiting on Team A |
 
 ## Dates
 
@@ -35,7 +35,14 @@ Keep this file short and current. AI tools read it at the start of every session
 ## Open questions (for Team A / Feudo)
 
 - [ ] Exact model input/output names, shapes, class order, and preprocessing (send `preprocessing.json` + test frames).
+      The file goes in `backend/app/static/preprocessing.json`; `services/inference.py` already reads it and
+      names the missing key if anything is absent. Required keys: `input_name`, `input_shape`, `dtype`,
+      `class_order`, `normalization` (plus optional `model_version`).
 - [ ] For the demo, which satellite images do we feed the model? (Proposal: a handful of TCIR test frames saved as `.npy`.)
+      This now blocks I1 on our side too: `/assess` only receives a latitude and longitude, so even with the
+      model loaded there is no frame to classify. `inference.classify()` takes an already-preprocessed frame
+      and is ready; what is missing is whatever supplies one.
+- [ ] Does the model also predict sustained wind? If yes, what unit? (`sustained_wind_kph` is left null without it.)
 
 ## Log (newest at the bottom, one line each: date — who — what)
 
@@ -54,4 +61,7 @@ Keep this file short and current. AI tools read it at the start of every session
 - 2026-10-20 — Tristan (Claude Code) — F3 rainfall wording on `feat/frontend-rainfall-wording`: `fresh` shows LIVE, "none" shows NO HEAVY RAINFALL WARNING, "unknown" says it does NOT mean no warning + PAGASA link, stale note, issued time, "Full advisory" expandable; checked live + with a dead PAGASA URL.
 - 2026-10-20 — Tristan (Claude Code) — F2 on `feat/frontend-live`: location (GPS button + manual lat/lon, default Quezon Memorial Circle), 60 s polling (paused when hidden / busy), Refresh, "Updated X min ago", STALE after 5 min, keeps last result on error + Retry, 422 message shown, flood years shared by map + request; "Live API" chip + honest mode bar. Pull-to-refresh cut.
 - 2026-10-20 — Tristan (Claude Code) — L3 on `feat/map-shelters`: map shows all 239 shelters (popup: name + "Unverified"), a "You" marker at the assessed point (map moves there), nearest shelter as a green marker, legend + OSM credit; checked at 390 px.
+- 2026-10-29 — Tristan (Claude Code) — I1 prep on `feat/inference-seam`: `MOCK_INFERENCE` is honoured for the first time (it was a dead setting), `services/inference.py` gains `load_preprocessing()`, `load_session()` (lazy onnxruntime import) and `classify(frame)`, all errors raise `ModelNotReady` naming what is missing; with the flag off and no model, `/assess` returns an honest `"unavailable"` + reason, never the mock. No model details invented — class order and input name come from Team A's `preprocessing.json`. 9 new tests, 27 pass + 1 skipped (unskips itself when the `.onnx` lands). Found: `/assess` has no satellite frame to feed the model, so that open question now blocks I1.
+- 2026-10-29 — Tristan (Claude Code) — `fix/mode-bar-cyclone-status`: the mode bar and the MODEL VERSION line no longer hard-code "DEMO" / "(mock)" — both read `cyclone_assessment`, so they stay true once a real model runs or when there is no estimate. Checked all three states in the browser (demo / live / unavailable); lint + build pass.
 - 2026-10-29 — Tristan (Claude Code) — Phase 4 part 1 on `docs/phase4-readme-demo`: ran the 7 final checks (all pass — evidence in the PR), README rewritten so a classmate can run it from zero on Windows (versions, PowerShell execution-policy fix, 3 screenshots, what is real vs DEMO), and `docs/DEMO.md` holds the ~3½-minute defense script. Verified `pip install -r requirements.txt` in a brand-new venv on Python 3.14.6. Review fix: the playbook's "turn Wi-Fi off and show STALE/unknown" beat does nothing on screen (the backend runs locally and caches PAGASA 10 min); DEMO.md now uses Wi-Fi off + backend restart for `unknown` and backend stopped for STALE hotlines — both checked live. Still to do: rehearse twice, record the backup video, each person explains their own files.
+- 2026-10-29 — Tristan (Claude Code) — Self-review of #15 fixed 5 bugs before merge: the class-count guard let a 3-class model pass against a 5-class list (wrong category served as "live"); `data_status` ignored the cyclone, so "complete" was reported while it was unavailable; a default argument made a safety test pass by accident (it would have failed on the day Team A delivers `preprocessing.json`); an unknown output layout crashed instead of saying so; the model path depended on the folder you ran from. Second pass: a model file that exists but cannot be opened (corrupt, opset too new, or Google Drive's HTML page) crashed all of `/assess` with HTTP 500, losing rainfall and shelter too — now "unavailable"; also onnxruntime errors on a rejected frame, NaN scores and a repeated class name now fail with a clear message. Each new test was checked by putting its bug back and watching it fail. 40 pass + 1 skipped.

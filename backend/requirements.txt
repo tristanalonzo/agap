@@ -5,3 +5,8 @@ pydantic-settings==2.16.0
 httpx==0.28.1
 beautifulsoup4==4.15.0
 pytest==9.1.1
+
+# Phase 3 (real model inference) only. Uncomment when Team A delivers the .onnx file:
+# installing these pulls ~200 MB, and nothing needs them while MOCK_INFERENCE=true.
+# onnxruntime==1.24.0
+# numpy==2.3.4
