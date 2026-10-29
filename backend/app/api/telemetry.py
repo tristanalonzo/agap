@@ -12,6 +12,7 @@ from app.config import MANILA_TZ, settings
 from app.schemas import (
     AssessRequest,
     AssessResponse,
+    CycloneAssessment,
     DataStatus,
     FloodScenario,
     Location,
@@ -30,9 +31,20 @@ router = APIRouter(prefix="/api/v1/telemetry", tags=["telemetry"])
 NOT_AVAILABLE = {"unavailable", "parse_error", "no_shelter_data"}
 
 
-def build_data_status(rainfall: RainfallWarning, shelter: NearestShelter) -> DataStatus:
-    """Summarise which parts of the response are stale or missing."""
-    statuses = {"rainfall_warning": rainfall.status, "nearest_shelter": shelter.status}
+def build_data_status(
+    cyclone: CycloneAssessment, rainfall: RainfallWarning, shelter: NearestShelter
+) -> DataStatus:
+    """Summarise which parts of the response are stale or missing.
+
+    The cyclone counts too: with MOCK_INFERENCE off and no model it is "unavailable", and the
+    summary must not call the response "complete" then. Its "demo" status is not counted as
+    missing -- the card flags it as DEMO itself.
+    """
+    statuses = {
+        "cyclone_assessment": cyclone.status,
+        "rainfall_warning": rainfall.status,
+        "nearest_shelter": shelter.status,
+    }
     unavailable = [name for name, status in statuses.items() if status in NOT_AVAILABLE]
     stale = [name for name, status in statuses.items() if status == "stale"]
     return DataStatus(
@@ -61,6 +73,7 @@ def assess(request: AssessRequest) -> AssessResponse:
             ),
         )
 
+    cyclone = get_cyclone_assessment()
     rainfall_warning = get_rainfall_warning()
     flood_scenario = FloodScenario(
         source="Project NOAH hazard maps (BetterGovPH dataset)",
@@ -81,9 +94,9 @@ def assess(request: AssessRequest) -> AssessResponse:
             jurisdiction="Quezon City",
             in_bounds=True,
         ),
-        cyclone_assessment=get_cyclone_assessment(),
+        cyclone_assessment=cyclone,
         rainfall_warning=rainfall_warning,
         flood_scenario=flood_scenario,
         nearest_shelter=shelter,
-        data_status=build_data_status(rainfall_warning, shelter),
+        data_status=build_data_status(cyclone, rainfall_warning, shelter),
     )

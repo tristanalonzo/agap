@@ -1,9 +1,12 @@
 import json
 from pathlib import Path
 
+import pytest
 from fastapi.testclient import TestClient
 
+from app.config import settings
 from app.main import app
+from app.services import inference
 
 client = TestClient(app)
 
@@ -74,3 +77,23 @@ def test_shelters_returns_a_feature_collection() -> None:
     body = response.json()
     assert body["type"] == "FeatureCollection"
     assert isinstance(body["features"], list)
+
+
+def test_data_status_lists_the_cyclone_when_it_is_unavailable(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # MOCK_INFERENCE off with no model: the cyclone has no estimate, so the summary must not
+    # call the response complete.
+    monkeypatch.setattr(settings, "MOCK_INFERENCE", False)
+    monkeypatch.setattr(inference, "PREPROCESSING_FILE", Path("does/not/exist.json"))
+    inference.clear_cache()
+
+    status = client.post("/api/v1/telemetry/assess", json=INSIDE_QC).json()["data_status"]
+    assert "cyclone_assessment" in status["unavailable_components"]
+    assert status["overall"] == "partial"
+
+
+def test_data_status_does_not_count_the_demo_cyclone_as_missing() -> None:
+    # The DEMO card flags itself; listing it as missing would change today's summary.
+    status = client.post("/api/v1/telemetry/assess", json=INSIDE_QC).json()["data_status"]
+    assert "cyclone_assessment" not in status["unavailable_components"]
