@@ -35,6 +35,10 @@ from app.schemas import CycloneAssessment
 
 PREPROCESSING_FILE = Path(__file__).parent.parent / "static" / "preprocessing.json"
 
+# backend/. A relative ONNX_MODEL_PATH is read from here, not from wherever the server was
+# started, so the model is found whichever folder you run uvicorn or pytest from.
+BACKEND_DIR = Path(__file__).parent.parent.parent
+
 # The five PAGASA categories, for display only. The order the model actually uses comes
 # from class_order in preprocessing.json, never from this dict.
 CATEGORY_NAMES = {
@@ -69,8 +73,12 @@ class ModelConfig:
     model_version: str
 
 
-def load_preprocessing(path: Path = PREPROCESSING_FILE) -> ModelConfig:
+def load_preprocessing(path: Path | None = None) -> ModelConfig:
     """Read preprocessing.json. Raises ModelNotReady if it is absent or incomplete."""
+    # Looked up when called, not as a default argument: a default is fixed once at import,
+    # which would make changing PREPROCESSING_FILE (as the tests do) silently do nothing.
+    if path is None:
+        path = PREPROCESSING_FILE
     if not path.exists():
         raise ModelNotReady(
             f"preprocessing.json not found at {path}. Team A still owes us the input name, "
@@ -113,9 +121,15 @@ def get_config() -> ModelConfig:
     return _config
 
 
+def model_path() -> Path:
+    """Where the .onnx file should be. A relative setting is read from backend/."""
+    path = Path(settings.ONNX_MODEL_PATH)
+    return path if path.is_absolute() else BACKEND_DIR / path
+
+
 def load_session(path: Path | None = None) -> Any:
     """Open the ONNX model. Raises ModelNotReady if the file or onnxruntime is missing."""
-    weights = Path(settings.ONNX_MODEL_PATH) if path is None else path
+    weights = model_path() if path is None else path
     if not weights.exists():
         raise ModelNotReady(
             f"Model file not found at {weights}. Put agap_tc_classifier.onnx there "
@@ -147,6 +161,24 @@ def clear_cache() -> None:
     _session = None
 
 
+def read_scores(output: Any) -> list[float]:
+    """The class scores in the model's first output, for the one frame we sent.
+
+    Accepts shape (1, n) -- one row per frame, the usual layout -- or (n,). Anything else is
+    a layout Team A has not told us about, so we stop rather than guess which numbers are
+    the scores.
+    """
+    shape = tuple(getattr(output, "shape", ()))
+    if len(shape) == 2 and shape[0] == 1:
+        return [float(score) for score in output[0]]
+    if len(shape) == 1:
+        return [float(score) for score in output]
+    raise ModelNotReady(
+        f"The model's first output has shape {shape or 'unknown'}, which we do not know how "
+        "to read. Ask Team A which output holds the class scores, and its shape."
+    )
+
+
 def classify(frame: Any, observed_at: str | None = None) -> CycloneAssessment:
     """Run the model on one already-preprocessed frame.
 
@@ -155,14 +187,19 @@ def classify(frame: Any, observed_at: str | None = None) -> CycloneAssessment:
     """
     config = get_config()
     outputs = get_session().run(None, {config.input_name: frame})
-    scores = list(outputs[0][0])
+    scores = read_scores(outputs[0])
 
-    best = max(range(len(scores)), key=lambda i: scores[i])
-    if best >= len(config.class_order):
+    # Exactly one score per class, or which score means which category is a guess. Checking
+    # only the winning index would let a 3-class model pass against a 5-class list and be
+    # read as the wrong category.
+    if len(scores) != len(config.class_order):
         raise ModelNotReady(
             f"The model returned {len(scores)} scores but preprocessing.json lists "
-            f"{len(config.class_order)} classes. Ask Team A which is right."
+            f"{len(config.class_order)} classes ({', '.join(config.class_order)}). "
+            "Ask Team A which is right."
         )
+
+    best = max(range(len(scores)), key=lambda i: scores[i])
     code = config.class_order[best]
 
     return CycloneAssessment(

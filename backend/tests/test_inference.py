@@ -52,6 +52,88 @@ def test_mock_off_without_the_model_says_unavailable_not_a_guess(
     assert "preprocessing.json" in result.warnings[0]
 
 
+def test_changing_preprocessing_file_really_changes_what_is_read(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # Guards the test above: with a valid config in place the complaint must move on to the
+    # model file. If PREPROCESSING_FILE were fixed at import, both tests would read the same
+    # file and this one would fail.
+    monkeypatch.setattr(settings, "MOCK_INFERENCE", False)
+    monkeypatch.setattr(inference, "PREPROCESSING_FILE", EXAMPLE_PREPROCESSING)
+    monkeypatch.setattr(settings, "ONNX_MODEL_PATH", "does/not/exist.onnx")
+
+    result = inference.get_cyclone_assessment()
+    assert result.status == "unavailable"
+    assert "Model file not found" in result.warnings[0]
+
+
+def test_relative_model_path_is_read_from_the_backend_folder(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(settings, "ONNX_MODEL_PATH", "app/weights/agap_tc_classifier.onnx")
+    expected = Path(inference.__file__).parents[2] / "app" / "weights" / "agap_tc_classifier.onnx"
+    assert inference.model_path() == expected
+
+
+class FakeOutput(list):
+    """Stands in for an onnxruntime output: a list that also has a shape."""
+
+    def __init__(self, rows: list, shape: tuple) -> None:
+        super().__init__(rows)
+        self.shape = shape
+
+
+class FakeSession:
+    def __init__(self, output: FakeOutput) -> None:
+        self.output = output
+
+    def run(self, _names: None, _inputs: dict) -> list:
+        return [self.output]
+
+
+def use_fake_model(monkeypatch: pytest.MonkeyPatch, output: FakeOutput) -> None:
+    monkeypatch.setattr(inference, "PREPROCESSING_FILE", EXAMPLE_PREPROCESSING)
+    monkeypatch.setattr(inference, "get_session", lambda: FakeSession(output))
+
+
+def test_classify_picks_the_highest_score_in_class_order(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # Example class order is TD, TS, STS, TY, STY, so index 3 is TY.
+    use_fake_model(monkeypatch, FakeOutput([[0.1, 0.2, 0.1, 0.5, 0.1]], (1, 5)))
+
+    result = inference.classify(frame=None)
+    assert result.category_code == "TY"
+    assert result.status == "live"
+    assert result.is_demo is False
+    assert result.confidence == 0.5
+    assert result.confidence_is_calibrated is False
+
+
+def test_classify_reads_a_flat_output_too(monkeypatch: pytest.MonkeyPatch) -> None:
+    use_fake_model(monkeypatch, FakeOutput([0.9, 0.0, 0.0, 0.0, 0.1], (5,)))
+    assert inference.classify(frame=None).category_code == "TD"
+
+
+def test_classify_refuses_fewer_scores_than_classes(monkeypatch: pytest.MonkeyPatch) -> None:
+    # A 3-class model against a 5-class list. The winning index (1) is inside the list, so
+    # checking only the index would wrongly report "TS". The counts must match.
+    use_fake_model(monkeypatch, FakeOutput([[0.1, 0.8, 0.1]], (1, 3)))
+
+    with pytest.raises(inference.ModelNotReady, match="3 scores but preprocessing.json lists 5"):
+        inference.classify(frame=None)
+
+
+def test_classify_refuses_an_output_layout_it_was_not_told_about(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # Two rows for one frame: which row is ours is a guess, so stop.
+    use_fake_model(monkeypatch, FakeOutput([[0.2] * 5, [0.2] * 5], (2, 5)))
+
+    with pytest.raises(inference.ModelNotReady, match="shape"):
+        inference.classify(frame=None)
+
+
 def test_load_preprocessing_reads_every_field() -> None:
     config = inference.load_preprocessing(EXAMPLE_PREPROCESSING)
     assert config.input_name == "input"
@@ -91,7 +173,7 @@ def test_missing_weights_tell_you_where_to_put_them(tmp_path: Path) -> None:
 
 
 @pytest.mark.skipif(
-    not Path(settings.ONNX_MODEL_PATH).exists(),
+    not inference.model_path().exists(),
     reason="Team A has not delivered agap_tc_classifier.onnx yet (Phase 3)",
 )
 def test_real_model_returns_one_of_the_five_categories() -> None:
