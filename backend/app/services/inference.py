@@ -25,6 +25,7 @@ preprocesses an image, since that is exactly the part we must not invent.
 """
 
 import json
+import math
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
@@ -96,7 +97,15 @@ def load_preprocessing(path: Path | None = None) -> ModelConfig:
             "Ask Team A for those before turning MOCK_INFERENCE off."
         )
 
-    unknown = [name for name in data["class_order"] if name not in CATEGORY_NAMES]
+    # A repeated name (a typo like TS, TS) would let two different scores mean the same
+    # category, which is the same wrong-category risk as a count mismatch.
+    class_order = data["class_order"]
+    if not class_order or len(set(class_order)) != len(class_order):
+        raise ModelNotReady(
+            f"preprocessing.json's class_order must name each class exactly once: {class_order}."
+        )
+
+    unknown = [name for name in class_order if name not in CATEGORY_NAMES]
     if unknown:
         raise ModelNotReady(
             f"preprocessing.json lists class(es) we do not know: {', '.join(unknown)}. "
@@ -144,7 +153,15 @@ def load_session(path: Path | None = None) -> Any:
             "onnxruntime is not installed. Uncomment the Phase 3 lines in "
             "backend/requirements.txt and run pip install -r requirements.txt."
         ) from error
-    return onnxruntime.InferenceSession(str(weights), providers=["CPUExecutionProvider"])
+    try:
+        return onnxruntime.InferenceSession(str(weights), providers=["CPUExecutionProvider"])
+    except Exception as error:
+        # Any failure to open the file -- corrupt, an opset this onnxruntime is too old for,
+        # or the HTML page Google Drive saves in place of a large file -- must become
+        # "unavailable" on the cyclone card. onnxruntime raises its own exception types, so
+        # without this one bad file would crash every /assess and take the rainfall warning
+        # and nearest shelter down with it.
+        raise ModelNotReady(f"Could not open the model at {weights}: {error}") from error
 
 
 def get_session() -> Any:
@@ -186,7 +203,16 @@ def classify(frame: Any, observed_at: str | None = None) -> CycloneAssessment:
     normalization of its own, because the steps are Team A's to specify, not ours to guess.
     """
     config = get_config()
-    outputs = get_session().run(None, {config.input_name: frame})
+    session = get_session()
+    try:
+        outputs = session.run(None, {config.input_name: frame})
+    except Exception as error:
+        # Most often the input name, shape or dtype in preprocessing.json does not match the
+        # model. Say that, instead of passing onnxruntime's own exception upward.
+        raise ModelNotReady(
+            f"The model rejected the frame: {error}. Check input_name, input_shape and dtype "
+            "in preprocessing.json against the model."
+        ) from error
     scores = read_scores(outputs[0])
 
     # Exactly one score per class, or which score means which category is a guess. Checking
@@ -197,6 +223,14 @@ def classify(frame: Any, observed_at: str | None = None) -> CycloneAssessment:
             f"The model returned {len(scores)} scores but preprocessing.json lists "
             f"{len(config.class_order)} classes ({', '.join(config.class_order)}). "
             "Ask Team A which is right."
+        )
+
+    # NaN never wins or loses a comparison, so max() would pick an arbitrary category, and
+    # the response could not even be sent as JSON. It usually means wrong preprocessing.
+    if not all(math.isfinite(score) for score in scores):
+        raise ModelNotReady(
+            "The model returned a score that is not a number (NaN or infinity), which usually "
+            "means the frame was preprocessed wrongly. Check the normalization steps."
         )
 
     best = max(range(len(scores)), key=lambda i: scores[i])
