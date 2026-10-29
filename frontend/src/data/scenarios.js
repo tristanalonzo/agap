@@ -1,5 +1,5 @@
 export const scenarios = [
-  // This chip shows the real backend response. Its cyclone result is still DEMO (no model yet).
+  // This chip shows the real backend response, whatever the cyclone card's status is.
   {
     id: "live",
     chip: "Live API",
