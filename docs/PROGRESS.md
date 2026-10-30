@@ -8,7 +8,7 @@ Keep this file short and current. AI tools read it at the start of every session
 |---|---|---|
 | Repo, skeleton, API contract, reviews | Tristan | skeleton done (#1); reviews ongoing |
 | Flood map (MapLibre + NOAH PMTiles) | Tristan | done (#2); shelters + you + nearest markers (`feat/map-shelters`) |
-| Backend: mock assess, hotlines, health, shelters endpoint | Marcus | done (#1 health, #4 mock `/assess`, hotlines, shelters) |
+| Backend: mock assess, hotlines, health, shelters endpoint | Marcus | done (#1 health, #4 mock `/assess`, hotlines, shelters, `feat/debris-matrix-api` debris matrix) |
 | Backend: PAGASA rainfall-warning scraper | Marcus | done by Tristan (Claude Code), `feat/pagasa-scraper` |
 | Backend: qc_shelters.geojson + nearest shelter | Marcus | done by Tristan (Claude Code), `feat/shelters` |
 | Frontend: app shell from mockup | Kurt | done (#3: Kurt's app, wired to the contract mock by Tristan) |
@@ -70,3 +70,4 @@ Keep this file short and current. AI tools read it at the start of every session
 - 2026-10-30 — QA (Antigravity) — `fix/demo-replay-fields`: `toDemoReplay` in `demoReplay.js` now sets `category_code` (`TS`/`TY`/`STY`) and clears live `issued_at`/`model_version`/`confidence` so Replay chips never leak live PAGASA or model metadata into mockup views.
 - 2026-10-30 — QA (Antigravity) — `fix/location-controls-validation`: trimmed manual lat/lon inputs so whitespace is rejected instead of parsed as `0`, synced manual inputs when GPS updates location, and clarified `LocationControls` status when a requested point is rejected outside QC.
 - 2026-10-30 — QA (Antigravity) — `fix/civil-defense-states`: added `civilDefense.none` so Action / SOS no longer reports "NO ORDER LOADED" when PAGASA is live with no warning, removed `(TODO: confirm)` from Yellow/Orange timelines, and styled red alerts with red colors in `index.css`.
+- 2026-10-30 — Marcus (Antigravity) — `feat/debris-matrix-api`: `GET /api/v1/debris-matrix` serves `debris_matrix.json` (+ pytest test, 41 pass + 1 skipped); `DebrisTab.jsx` wired to API with offline cache, `StatusBadge`, tier-matched precautionary guidance (TD–STY), and explicit UNAVAILABLE state when category is null/unknown.

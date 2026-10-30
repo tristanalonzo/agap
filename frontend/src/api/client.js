@@ -41,3 +41,11 @@ export async function getShelters() {
   }
   return response.json();
 }
+
+export async function getDebrisMatrix() {
+  const response = await fetch("/api/v1/debris-matrix");
+  if (!response.ok) {
+    throw new Error(`Debris matrix request failed (HTTP ${response.status})`);
+  }
+  return response.json();
+}

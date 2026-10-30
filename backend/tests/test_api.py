@@ -97,3 +97,19 @@ def test_data_status_does_not_count_the_demo_cyclone_as_missing() -> None:
     # The DEMO card flags itself; listing it as missing would change today's summary.
     status = client.post("/api/v1/telemetry/assess", json=INSIDE_QC).json()["data_status"]
     assert "cyclone_assessment" not in status["unavailable_components"]
+
+
+def test_debris_matrix_returns_all_five_categories() -> None:
+    response = client.get("/api/v1/debris-matrix")
+    assert response.status_code == 200
+    body = response.json()
+    assert body.get("classification_source_url")
+    matrix = body.get("wind_hazard_matrix", [])
+    assert [item["code"] for item in matrix] == ["TD", "TS", "STS", "TY", "STY"]
+    for item in matrix:
+        vulnerabilities = item.get("structural_vulnerabilities", [])
+        assert len(vulnerabilities) > 0
+        for vuln in vulnerabilities:
+            assert vuln.get("element")
+            assert vuln.get("risk")
+            assert vuln.get("action")
