@@ -74,6 +74,9 @@ export default function DebrisTab({ cyclone }) {
     ? `${activeTier.code} · ${activeTier.category.toUpperCase()}`
     : "UNKNOWN";
   const windRangeText = activeTier ? formatWindRange(activeTier.sustained_wind_kph_range) : null;
+  // The tier below is chosen by the cyclone category, so while that is DEMO this card is DEMO
+  // too, however fresh the reference matrix is (AGENTS.md safety rules 1 and 6).
+  const cardStatus = cyclone?.is_demo ? "demo" : activeTier ? state.status : "unavailable";
 
   return (
     <>
@@ -86,7 +89,7 @@ export default function DebrisTab({ cyclone }) {
             </p>
           </div>
           <StatusBadge
-            status={activeTier ? state.status : "unavailable"}
+            status={cardStatus}
             time={state.time ?? cyclone?.inferred_at}
           />
         </div>
