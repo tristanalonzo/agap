@@ -1,5 +1,4 @@
 // Civil defense status per alert level.
-// Only "red" comes from the design. TODO: confirm orange/yellow wording.
 export const civilDefense = {
   red: {
     badge: "MANDATORY ORDER",
@@ -9,12 +8,17 @@ export const civilDefense = {
   orange: {
     badge: "PREPARE",
     title: "Prepare for Possible Evacuation",
-    timeline: "TARGET TIMELINE: FOLLOW QCDRRMO DIRECTIVES (TODO: confirm)",
+    timeline: "TARGET TIMELINE: FOLLOW QCDRRMO AND BARANGAY DIRECTIVES",
   },
   yellow: {
     badge: "MONITOR",
     title: "Stay Alert and Monitor Updates",
-    timeline: "TARGET TIMELINE: NO ORDER YET (TODO: confirm)",
+    timeline: "TARGET TIMELINE: MONITOR PAGASA AND BARANGAY ANNOUNCEMENTS",
+  },
+  none: {
+    badge: "NO ACTIVE ORDER",
+    title: "No heavy rainfall warning in effect",
+    timeline: "CONTINUE MONITORING PAGASA AND QCDRRMO UPDATES",
   },
   unknown: {
     badge: "NO ORDER LOADED",
