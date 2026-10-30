@@ -116,7 +116,7 @@ export default function App() {
         {tab === "Overview" && (
           <>
             <LocationCard location={data.location} />
-            <LocationControls location={location} onChange={setLocation} />
+            <LocationControls location={location} assessedLocation={data.location} onChange={setLocation} />
             <SatelliteCard cyclone={data.cyclone_assessment} visual={scenario.id} />
             <HrwsCard rainfall={rainfall} />
           </>
