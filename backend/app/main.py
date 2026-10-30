@@ -3,7 +3,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import health, hotlines, shelters, telemetry
+from app.api import debris, health, hotlines, shelters, telemetry
 from app.config import settings
 
 app = FastAPI(title="AGAP API", version="0.1.0")
@@ -19,3 +19,4 @@ app.include_router(health.router)
 app.include_router(telemetry.router)
 app.include_router(hotlines.router)
 app.include_router(shelters.router)
+app.include_router(debris.router)
