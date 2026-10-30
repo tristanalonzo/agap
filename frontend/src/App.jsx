@@ -18,8 +18,15 @@ const TABS = ["Overview", "Hazard Map", "Debris", "Action / SOS"];
 const DEFAULT_LOCATION = { lat: 14.6516, lon: 121.0493, source: "Default: Quezon Memorial Circle" };
 
 // When the last good update is over 5 minutes old, every live card says STALE.
+// Cards that are DEMO or UNAVAILABLE keep their status so we never claim we had a result when we didn't.
 function markStale(data) {
-  return { ...data, rainfall_warning: { ...data.rainfall_warning, status: "stale" } };
+  const rainfallStatus = data.rainfall_warning.status === "fresh" ? "stale" : data.rainfall_warning.status;
+  const cycloneStatus = data.cyclone_assessment.status === "live" ? "stale" : data.cyclone_assessment.status;
+  return {
+    ...data,
+    rainfall_warning: { ...data.rainfall_warning, status: rainfallStatus },
+    cyclone_assessment: { ...data.cyclone_assessment, status: cycloneStatus },
+  };
 }
 
 // What the mode bar says about the cyclone card. Read from the response, not hard-coded,
@@ -27,7 +34,9 @@ function markStale(data) {
 // so honestly when there is no result at all (AGENTS.md safety rules 1, 4 and 6).
 function cycloneNote(cyclone) {
   if (cyclone.is_demo) return "Cyclone card is DEMO (no model yet)";
-  if (cyclone.status === "live") return "Cyclone is a model estimate, not a PAGASA signal";
+  if (cyclone.status === "live" || cyclone.status === "stale") {
+    return "Cyclone is a model estimate, not a PAGASA signal";
+  }
   return "Cyclone estimate unavailable";
 }
 
@@ -116,7 +125,7 @@ export default function App() {
         {tab === "Overview" && (
           <>
             <LocationCard location={data.location} />
-            <LocationControls location={location} onChange={setLocation} />
+            <LocationControls location={location} assessedLocation={data.location} onChange={setLocation} />
             <SatelliteCard cyclone={data.cyclone_assessment} visual={scenario.id} />
             <HrwsCard rainfall={rainfall} />
           </>
