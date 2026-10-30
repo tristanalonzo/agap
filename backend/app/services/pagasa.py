@@ -24,7 +24,7 @@ USER_AGENT = (
 NO_WARNING_TEXT = "no heavy rainfall warning"
 LEVELS = ["red", "orange", "yellow"]  # most severe first
 LEVEL_PATTERN = re.compile(r"\b(RED|ORANGE|YELLOW)\s+(?:RAINFALL\s+)?WARNING(?:\s+LEVEL)?\s*:?\s*", re.I)
-ISSUED_PATTERN = re.compile(r"Issued at:\s*(\d{1,2}:\d{2}\s*[AP]M),?\s*(\d{1,2}\s+\w+\s+\d{4})", re.I)
+ISSUED_PATTERN = re.compile(r"Issued at:\s*(\d{1,2}:\d{2})\s*([AP]M),?\s*(\d{1,2}\s+\w+\s+\d{4})", re.I)
 METRO_MANILA_PATTERN = re.compile(r"metro manila|\bNCR\b|quezon city", re.I)
 
 # Last good result, so we don't ask PAGASA on every request.
@@ -51,7 +51,9 @@ def parse_issued_at(text: str) -> str | None:
     if not match:
         return None
     try:
-        issued = datetime.strptime(f"{match.group(1)} {match.group(2)}", "%I:%M %p %d %B %Y")
+        issued = datetime.strptime(
+            f"{match.group(1)} {match.group(2).upper()} {match.group(3)}", "%I:%M %p %d %B %Y"
+        )
     except ValueError:
         return None
     return issued.replace(tzinfo=MANILA_TZ).isoformat(timespec="seconds")
@@ -64,7 +66,7 @@ def find_level_areas(text: str) -> dict[str, str]:
     for i, match in enumerate(matches):
         end = matches[i + 1].start() if i + 1 < len(matches) else len(text)
         level = match.group(1).lower()
-        areas.setdefault(level, text[match.end() : end].split(". ")[0].strip())
+        areas.setdefault(level, text[match.end() : end].split(".")[0].strip())
     return areas
 
 
