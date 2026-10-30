@@ -44,6 +44,14 @@ Keep this file short and current. AI tools read it at the start of every session
       and is ready; what is missing is whatever supplies one.
 - [ ] Does the model also predict sustained wind? If yes, what unit? (`sustained_wind_kph` is left null without it.)
 
+## Open questions (for QCDRRMO / the city)
+
+- [ ] The civil-defense wording on the Action / SOS tab is OURS, not sourced. Only the `red` entry in
+      `frontend/src/data/safety.js` came from the design mockup; the `orange`, `yellow` and `none`
+      badges, titles and timelines were written by us in #22, which also removed the `(TODO: confirm)`
+      markers that used to say so. Check them against QCDRRMO's own wording before anyone presents
+      this as official guidance.
+
 ## Log (newest at the bottom, one line each: date — who — what)
 
 - 2026-10-17 — Tristan — Starter kit pushed (AGENTS.md, contract, reference docs).
@@ -71,3 +79,4 @@ Keep this file short and current. AI tools read it at the start of every session
 - 2026-10-30 — QA (Antigravity) — `fix/location-controls-validation`: trimmed manual lat/lon inputs so whitespace is rejected instead of parsed as `0`, synced manual inputs when GPS updates location, and clarified `LocationControls` status when a requested point is rejected outside QC.
 - 2026-10-30 — QA (Antigravity) — `fix/civil-defense-states`: added `civilDefense.none` so Action / SOS no longer reports "NO ORDER LOADED" when PAGASA is live with no warning, removed `(TODO: confirm)` from Yellow/Orange timelines, and styled red alerts with red colors in `index.css`.
 - 2026-10-30 — Marcus (Antigravity) — `feat/debris-matrix-api`: `GET /api/v1/debris-matrix` serves `debris_matrix.json` (+ pytest test, 41 pass + 1 skipped); `DebrisTab.jsx` wired to API with offline cache, `StatusBadge`, tier-matched precautionary guidance (TD–STY), and explicit UNAVAILABLE state when category is null/unknown.
+- 2026-10-30 — Tristan (Claude Code) — `docs/civil-defense-wording`: recorded that the orange/yellow/none civil-defense wording in `safety.js` is ours and unverified. #22 removed the `(TODO: confirm)` markers from the code, so the question had nowhere left to live.
