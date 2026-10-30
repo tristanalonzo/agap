@@ -1,11 +1,18 @@
 import { useState } from "react";
 
 // Lets the user pick the point we assess: their GPS position, or a typed latitude/longitude.
-export default function LocationControls({ location, onChange }) {
+export default function LocationControls({ location, assessedLocation, onChange }) {
   const [message, setMessage] = useState(null);
   const [showManual, setShowManual] = useState(false);
   const [latText, setLatText] = useState(String(location.lat));
   const [lonText, setLonText] = useState(String(location.lon));
+
+  // If the user picked a point that failed (e.g. outside QC), say clearly that the cards still
+  // show the previous assessed point rather than claiming they show the rejected one.
+  const locationPendingOrRejected =
+    assessedLocation &&
+    (Math.abs(assessedLocation.latitude - location.lat) > 0.0001 ||
+      Math.abs(assessedLocation.longitude - location.lon) > 0.0001);
 
   function useGps() {
     if (!navigator.geolocation) {
@@ -16,12 +23,12 @@ export default function LocationControls({ location, onChange }) {
     setMessage("Asking for your location…");
     navigator.geolocation.getCurrentPosition(
       (position) => {
+        const lat = Number(position.coords.latitude.toFixed(5));
+        const lon = Number(position.coords.longitude.toFixed(5));
         setMessage(null);
-        onChange({
-          lat: Number(position.coords.latitude.toFixed(5)),
-          lon: Number(position.coords.longitude.toFixed(5)),
-          source: "Your GPS location",
-        });
+        setLatText(String(lat));
+        setLonText(String(lon));
+        onChange({ lat, lon, source: "Your GPS location" });
       },
       () => {
         setMessage("Location not available (permission denied or no signal). Set it by hand below.");
@@ -33,9 +40,11 @@ export default function LocationControls({ location, onChange }) {
 
   function setManual(event) {
     event.preventDefault();
-    const lat = Number(latText);
-    const lon = Number(lonText);
-    if (!Number.isFinite(lat) || !Number.isFinite(lon) || latText === "" || lonText === "") {
+    const trimmedLat = latText.trim();
+    const trimmedLon = lonText.trim();
+    const lat = Number(trimmedLat);
+    const lon = Number(trimmedLon);
+    if (!Number.isFinite(lat) || !Number.isFinite(lon) || trimmedLat === "" || trimmedLon === "") {
       setMessage("Enter numbers, for example 14.6516 and 121.0493.");
       return;
     }
@@ -45,7 +54,11 @@ export default function LocationControls({ location, onChange }) {
 
   return (
     <section className="card location-controls">
-      <p className="small muted">Showing: {location.source}</p>
+      <p className="small muted">
+        {locationPendingOrRejected
+          ? `Requested: ${location.source} (${location.lat}, ${location.lon}) — cards below still show ${assessedLocation.latitude.toFixed(4)}°N, ${assessedLocation.longitude.toFixed(4)}°E`
+          : `Showing: ${location.source}`}
+      </p>
       <div className="location-buttons">
         <button className="btn" onClick={useGps}>
           Use my location
