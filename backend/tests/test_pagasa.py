@@ -71,3 +71,19 @@ def test_timeout_after_a_good_result_is_stale(monkeypatch: pytest.MonkeyPatch) -
     result = pagasa.get_rainfall_warning()
     assert result.status == "stale"
     assert result.alert_level == "orange"
+
+
+def test_issued_at_without_space_before_ampm_is_parsed() -> None:
+    assert pagasa.parse_issued_at("Issued at: 2:00PM, 21 October 2026") == "2026-10-21T14:00:00+08:00"
+
+
+def test_affected_area_stops_at_period_even_without_space() -> None:
+    html = (
+        '<div id="rainfalls">'
+        "ORANGE WARNING LEVEL: Metro Manila, Bulacan and Rizal."
+        "Flooding is threatening in low-lying areas."
+        "</div>"
+    )
+    result = pagasa.parse_rainfall(html, "2026-10-21T14:00:00+08:00")
+    assert result.alert_level == "orange"
+    assert result.affected_area == "Metro Manila, Bulacan and Rizal"
